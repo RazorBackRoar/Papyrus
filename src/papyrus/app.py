@@ -1,5 +1,4 @@
 import os
-import sys
 import json
 import tempfile
 import subprocess
@@ -8,9 +7,9 @@ import platform
 from datetime import datetime
 from functools import partial
 
-from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
-                               QTextEdit, QPushButton, QLabel, QTabWidget, 
-                               QCheckBox, QMessageBox, QFrame, QLineEdit, 
+from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+                               QTextEdit, QPushButton, QLabel, QTabWidget,
+                               QCheckBox, QMessageBox, QFrame, QLineEdit,
                                QSpinBox, QScrollArea, QDialog, QSizePolicy, QApplication)
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon, QPalette, QColor, QKeySequence, QShortcut

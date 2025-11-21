@@ -15,33 +15,36 @@ def eject_dmg(volname):
     """Ejects the DMG volume if it is mounted."""
     print(f"⏏️  Checking for mounted volume '/Volumes/{volname}'...")
     if os.path.exists(f"/Volumes/{volname}"):
-        print(f"   Ejecting '/Volumes/{volname}'...")
-        try:
-            run_command(f"hdiutil detach '/Volumes/{volname}' -force")
-        except SystemExit:
-            print(f"⚠️ Failed to eject '/Volumes/{volname}'. Please eject manually.")
+    try:
+        result = subprocess.run(
+            ['hdiutil', 'info'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        if volname in result.stdout:
+            print(f"   Ejecting existing '{volname}' volume...")
+            subprocess.run(['hdiutil', 'detach', f"/Volumes/{volname}"],
+                         capture_output=True, check=False)
+    except subprocess.CalledProcessError:
+        pass
 
 def build():
-    # Eject previous mounts
-    eject_dmg("Papyrus")
+    print("🧹 Cleaning up previous builds...")
+    eject_dmg("Papyrus Installer")
 
-    # Clean up
-    print("🧹 Cleaning up old artifacts...")
-    for path in ["build", "dist"]:
-        if os.path.exists(path):
-            print(f"   Removing '{path}'...")
-            try:
-                shutil.rmtree(path)
-            except OSError:
-                print(f"⚠️ Failed to clean {path} with shutil, trying rm -rf...")
-                run_command(f"rm -rf {path}")
+    # Clean dist and build directories
+    for directory in ["dist", "build"]:
+        if os.path.exists(directory):
+            print(f"   Removing {directory}/")
+            shutil.rmtree(directory)
 
-    # Build with py2app
-    print("📦 Building the application with py2app...")
+    # Build the .app with py2app
+    print("📦 Building the .app bundle with py2app...")
     try:
         run_command(f"{sys.executable} setup.py py2app")
     except SystemExit:
-        # py2app might exit with error even if successful (known issue with some setuptools versions)
+        # Check if app was created despite error
         if not os.path.exists("dist/Papyrus.app"):
             raise
         print("⚠️ py2app exited with error, but app bundle was created. Proceeding...")
@@ -59,31 +62,31 @@ def build():
     print("💿 Creating the distributable DMG...")
     if shutil.which("create-dmg"):
         dmg_name = "Papyrus-v1.0.0-macOS.dmg"
-        
+
         # Clean staging directory first to avoid size bloat
         staging_dir = "dist/dmg_source"
         if os.path.exists(staging_dir):
-            print(f"   Cleaning old staging directory...")
+            print("   Cleaning old staging directory...")
             try:
                 shutil.rmtree(staging_dir)
             except OSError:
                 run_command(f"rm -rf {staging_dir}")
-        
+
         # Create fresh staging directory for DMG content
         os.makedirs(staging_dir, exist_ok=True)
-        
+
         # Copy App, LICENSE, and README to staging
         print("   Copying files to DMG staging area...")
         shutil.copytree(app_path, os.path.join(staging_dir, "Papyrus.app"))
         shutil.copy("LICENSE", staging_dir)
         shutil.copy("README.md", staging_dir)
-        
+
         # Create symbolic link to /Applications for drag-and-drop installation
         print("   Creating Applications symlink...")
         applications_link = os.path.join(staging_dir, "Applications")
         if not os.path.exists(applications_link):
             os.symlink("/Applications", applications_link)
-        
+
         # Create DMG from staging directory
         # Window size: 410x420
         # Window position: 200,200 (avoid left edge where dock is)
@@ -106,7 +109,7 @@ def build():
             --no-internet-enable \
             'dist/{dmg_name}' \
             '{staging_dir}'")
-            
+
         print(f"🎉 Build Complete! DMG at dist/{dmg_name}")
     else:
         print("⚠️ 'create-dmg' not found. Skipping DMG creation.")

@@ -6,7 +6,7 @@ from .utils import clean_pasted_html
 
 class PagedTextEdit(QTextEdit):
     """Text editor with visual page break indicators and HTML paste handling."""
-    
+
     def __init__(self, *args, **kwargs):
         """Initialize the paged text editor."""
         super().__init__(*args, **kwargs)
@@ -16,7 +16,7 @@ class PagedTextEdit(QTextEdit):
 
     def keyPressEvent(self, event):
         """Handle key press events.
-        
+
         Args:
             event: Key event
         """
@@ -27,7 +27,7 @@ class PagedTextEdit(QTextEdit):
 
     def set_line_color(self, color_str: str) -> None:
         """Set the color of page break lines.
-        
+
         Args:
             color_str: Color string (e.g., '#FF5A09')
         """
@@ -43,7 +43,7 @@ class PagedTextEdit(QTextEdit):
 
     def set_show_page_breaks(self, show: bool) -> None:
         """Enable or disable page break indicators.
-        
+
         Args:
             show: Whether to show page breaks
         """
@@ -52,7 +52,7 @@ class PagedTextEdit(QTextEdit):
 
     def page_height_px(self) -> int:
         """Calculate page height in pixels based on DPI.
-        
+
         Returns:
             Page height in pixels
         """
@@ -64,7 +64,7 @@ class PagedTextEdit(QTextEdit):
 
     def paintEvent(self, event):
         """Paint the editor with page break lines.
-        
+
         Args:
             event: Paint event
         """
@@ -108,7 +108,7 @@ class PagedTextEdit(QTextEdit):
 
     def insertFromMimeData(self, source):
         """Insert data from clipboard with HTML cleaning.
-        
+
         Args:
             source: MIME data from clipboard
         """

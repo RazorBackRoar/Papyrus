@@ -3,10 +3,10 @@ from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QTextDocu
 
 class HTMLSyntaxHighlighter(QSyntaxHighlighter):
     """Syntax highlighter for HTML code with custom color scheme."""
-    
+
     def __init__(self, doc: QTextDocument):
         """Initialize the syntax highlighter.
-        
+
         Args:
             doc: QTextDocument to apply highlighting to
         """
@@ -21,7 +21,7 @@ class HTMLSyntaxHighlighter(QSyntaxHighlighter):
 
     def highlightBlock(self, text):
         """Apply syntax highlighting to a block of text.
-        
+
         Args:
             text: Text block to highlight
         """

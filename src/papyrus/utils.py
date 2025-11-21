@@ -4,10 +4,10 @@ import os
 
 def resource_path(relative_path):
     """Get absolute path to resource, works for dev and for PyInstaller.
-    
+
     Args:
         relative_path: Relative path to the resource file
-        
+
     Returns:
         Absolute path to the resource
     """
@@ -21,10 +21,10 @@ def resource_path(relative_path):
 
 def clean_pasted_html(text: str) -> str:
     """Clean pasted HTML by removing content before DOCTYPE declaration.
-    
+
     Args:
         text: HTML text to clean
-        
+
     Returns:
         Cleaned HTML text
     """
