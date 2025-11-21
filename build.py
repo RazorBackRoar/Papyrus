@@ -13,8 +13,6 @@ def run_command(command):
 
 def eject_dmg(volname):
     """Ejects the DMG volume if it is mounted."""
-    print(f"⏏️  Checking for mounted volume '/Volumes/{volname}'...")
-    if os.path.exists(f"/Volumes/{volname}"):
     try:
         result = subprocess.run(
             ['hdiutil', 'info'],
