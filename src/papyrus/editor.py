@@ -1,43 +1,73 @@
+"""Custom text editor with page breaks and HTML paste handling."""
 from PySide6.QtWidgets import QTextEdit, QApplication
 from PySide6.QtCore import Qt, QMimeData
 from PySide6.QtGui import QColor, QPainter, QPen
 from .utils import clean_pasted_html
 
 class PagedTextEdit(QTextEdit):
+    """Text editor with visual page break indicators and HTML paste handling."""
+    
     def __init__(self, *args, **kwargs):
+        """Initialize the paged text editor."""
         super().__init__(*args, **kwargs)
         self._show_page_breaks = False
         self._line_color = QColor('#FF5A09')
         self.verticalScrollBar().valueChanged.connect(self._request_repaint)
 
     def keyPressEvent(self, event):
+        """Handle key press events.
+        
+        Args:
+            event: Key event
+        """
         if event.key() in (Qt.Key_Return, Qt.Key_Enter):
             self.window().open_in_browser()
         else:
             super().keyPressEvent(event)
 
     def set_line_color(self, color_str: str) -> None:
+        """Set the color of page break lines.
+        
+        Args:
+            color_str: Color string (e.g., '#FF5A09')
+        """
         try:
             self._line_color = QColor(color_str)
-        except Exception:
+        except (ValueError, TypeError):
             self._line_color = QColor('#FF5A09')
         self._request_repaint()
 
     def _request_repaint(self):
+        """Request a repaint of the viewport."""
         self.viewport().update()
 
     def set_show_page_breaks(self, show: bool) -> None:
+        """Enable or disable page break indicators.
+        
+        Args:
+            show: Whether to show page breaks
+        """
         self._show_page_breaks = bool(show)
         self._request_repaint()
 
     def page_height_px(self) -> int:
+        """Calculate page height in pixels based on DPI.
+        
+        Returns:
+            Page height in pixels
+        """
         try:
             dpi = QApplication.primaryScreen().logicalDotsPerInch() or 96
-        except Exception:
+        except (AttributeError, RuntimeError):
             dpi = 96
         return int(round(11.0 * dpi))
 
     def paintEvent(self, event):
+        """Paint the editor with page break lines.
+        
+        Args:
+            event: Paint event
+        """
         super().paintEvent(event)
         if not self._show_page_breaks:
             return
@@ -77,6 +107,11 @@ class PagedTextEdit(QTextEdit):
         painter.end()
 
     def insertFromMimeData(self, source):
+        """Insert data from clipboard with HTML cleaning.
+        
+        Args:
+            source: MIME data from clipboard
+        """
         if source.hasText():
             text = source.text()
             cleaned = clean_pasted_html(text)

@@ -1,7 +1,15 @@
+"""HTML syntax highlighter for the text editor."""
 from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QTextDocument
 
 class HTMLSyntaxHighlighter(QSyntaxHighlighter):
+    """Syntax highlighter for HTML code with custom color scheme."""
+    
     def __init__(self, doc: QTextDocument):
+        """Initialize the syntax highlighter.
+        
+        Args:
+            doc: QTextDocument to apply highlighting to
+        """
         super().__init__(doc)
         self.colors = {
             'tag': '#FF5A09',
@@ -12,6 +20,11 @@ class HTMLSyntaxHighlighter(QSyntaxHighlighter):
         }
 
     def highlightBlock(self, text):
+        """Apply syntax highlighting to a block of text.
+        
+        Args:
+            text: Text block to highlight
+        """
         tag_format = QTextCharFormat()
         tag_format.setForeground(QColor(self.colors['tag']))
         start = text.find('<')
