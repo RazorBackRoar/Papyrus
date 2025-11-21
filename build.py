@@ -1,0 +1,116 @@
+import os
+import shutil
+import subprocess
+import sys
+
+def run_command(command):
+    print(f"Running: {command}")
+    try:
+        subprocess.run(command, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error running command: {command}")
+        sys.exit(1)
+
+def eject_dmg(volname):
+    """Ejects the DMG volume if it is mounted."""
+    print(f"⏏️  Checking for mounted volume '/Volumes/{volname}'...")
+    if os.path.exists(f"/Volumes/{volname}"):
+        print(f"   Ejecting '/Volumes/{volname}'...")
+        try:
+            run_command(f"hdiutil detach '/Volumes/{volname}' -force")
+        except SystemExit:
+            print(f"⚠️ Failed to eject '/Volumes/{volname}'. Please eject manually.")
+
+def build():
+    # Eject previous mounts
+    eject_dmg("Papyrus")
+
+    # Clean up
+    print("🧹 Cleaning up old artifacts...")
+    for path in ["build", "dist"]:
+        if os.path.exists(path):
+            print(f"   Removing '{path}'...")
+            try:
+                shutil.rmtree(path)
+            except OSError:
+                print(f"⚠️ Failed to clean {path} with shutil, trying rm -rf...")
+                run_command(f"rm -rf {path}")
+
+    # Build with py2app
+    print("📦 Building the application with py2app...")
+    try:
+        run_command(f"{sys.executable} setup.py py2app")
+    except SystemExit:
+        # py2app might exit with error even if successful (known issue with some setuptools versions)
+        if not os.path.exists("dist/Papyrus.app"):
+            raise
+        print("⚠️ py2app exited with error, but app bundle was created. Proceeding...")
+
+    # Sign the app (ad-hoc)
+    print("✍️ Signing the .app bundle (ad-hoc)...")
+    app_path = "dist/Papyrus.app"
+    run_command(f"codesign --force --deep --sign - '{app_path}'")
+
+    # Verify signature
+    print("✅ Verifying the ad-hoc signature...")
+    run_command(f"codesign --verify --deep --strict --verbose=2 '{app_path}'")
+
+    # Create DMG
+    print("💿 Creating the distributable DMG...")
+    if shutil.which("create-dmg"):
+        dmg_name = "Papyrus-v1.0.0-macOS.dmg"
+        
+        # Clean staging directory first to avoid size bloat
+        staging_dir = "dist/dmg_source"
+        if os.path.exists(staging_dir):
+            print(f"   Cleaning old staging directory...")
+            try:
+                shutil.rmtree(staging_dir)
+            except OSError:
+                run_command(f"rm -rf {staging_dir}")
+        
+        # Create fresh staging directory for DMG content
+        os.makedirs(staging_dir, exist_ok=True)
+        
+        # Copy App, LICENSE, and README to staging
+        print("   Copying files to DMG staging area...")
+        shutil.copytree(app_path, os.path.join(staging_dir, "Papyrus.app"))
+        shutil.copy("LICENSE", staging_dir)
+        shutil.copy("README.md", staging_dir)
+        
+        # Create symbolic link to /Applications for drag-and-drop installation
+        print("   Creating Applications symlink...")
+        applications_link = os.path.join(staging_dir, "Applications")
+        if not os.path.exists(applications_link):
+            os.symlink("/Applications", applications_link)
+        
+        # Create DMG from staging directory
+        # Window size: 410x420
+        # Window position: 200,200 (avoid left edge where dock is)
+        # Layout (4 icons in 2x2 grid):
+        #  - Papyrus.app: (100, 105)
+        #  - Applications: (310, 105)
+        #  - LICENSE: (100, 295)
+        #  - README.md: (310, 295)
+        run_command(f"create-dmg \
+            --volname 'Papyrus Installer' \
+            --window-pos 200 200 \
+            --window-size 410 420 \
+            --icon-size 80 \
+            --text-size 11 \
+            --icon 'Papyrus.app' 100 105 \
+            --icon 'Applications' 310 105 \
+            --icon 'LICENSE' 100 295 \
+            --icon 'README.md' 310 295 \
+            --hide-extension 'Papyrus.app' \
+            --no-internet-enable \
+            'dist/{dmg_name}' \
+            '{staging_dir}'")
+            
+        print(f"🎉 Build Complete! DMG at dist/{dmg_name}")
+    else:
+        print("⚠️ 'create-dmg' not found. Skipping DMG creation.")
+        print("Install it with: brew install create-dmg")
+
+if __name__ == "__main__":
+    build()
