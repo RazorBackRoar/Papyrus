@@ -94,30 +94,43 @@ def build():
         # Create DMG from staging directory
         # Window size: 410x420
         # Window position: 200,200 (avoid left edge where dock is)
-        run_command(f"create-dmg \
-            --volname 'Papyrus Installer' \
-            --window-pos 200 200 \
-            --window-size 410 420 \
-            --icon-size 80 \
-            --text-size 11 \
-            --icon 'Papyrus.app' 100 105 \
-            --icon 'Applications' 310 105 \
-            --icon 'LICENSE' 100 295 \
-            --icon 'README.md' 310 295 \
-            --hide-extension 'Papyrus.app' \
-            --no-internet-enable \
-            '{dmg_path}' \
-            '{staging_dir}'")
+        try:
+            run_command(f"create-dmg \
+                --volname 'Papyrus Installer' \
+                --window-pos 200 200 \
+                --window-size 410 420 \
+                --icon-size 80 \
+                --text-size 11 \
+                --icon 'Papyrus.app' 100 105 \
+                --icon 'Applications' 310 105 \
+                --icon 'LICENSE' 100 295 \
+                --icon 'README.md' 310 295 \
+                --hide-extension 'Papyrus.app' \
+                --no-internet-enable \
+                --sandbox-safe \
+                '{dmg_path}' \
+                '{staging_dir}'")
+            print(f"🎉 Build Complete! DMG at {dmg_path}")
+        except SystemExit:
+            print("⚠️ 'create-dmg' failed (likely due to unmount issue). Attempting fallback to standard DMG...")
+            # Force eject any stuck volumes
+            eject_dmg("Papyrus Installer")
+            # Create simple DMG using hdiutil
+            run_command(f"hdiutil create -volname 'Papyrus Installer' -srcfolder '{staging_dir}' -ov -format UDZO '{dmg_path}'")
+            print(f"✅ Fallback Complete! Standard DMG created at {dmg_path}")
 
         # Cleanup staging directory after successful build to save space
         print("   Cleaning up staging directory...")
         if os.path.exists(staging_dir):
             shutil.rmtree(staging_dir)
 
-        print(f"🎉 Build Complete! DMG at {dmg_path}")
     else:
-        print("⚠️ 'create-dmg' not found. Skipping DMG creation.")
-        print("Install it with: brew install create-dmg")
+        print("⚠️ 'create-dmg' not found. Creating standard DMG...")
+        dmg_name = "Papyrus-v1.0.0-macOS.dmg"
+        dmg_path = os.path.join("dist", dmg_name)
+        staging_dir = "dist/dmg_source"
+        run_command(f"hdiutil create -volname 'Papyrus Installer' -srcfolder '{staging_dir}' -ov -format UDZO '{dmg_path}'")
+        print(f"✅ Build Complete! DMG at {dmg_path}")
 
 if __name__ == "__main__":
     build()
