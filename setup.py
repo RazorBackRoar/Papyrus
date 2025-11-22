@@ -29,7 +29,7 @@ OPTIONS = {
         'CFBundleIdentifier': "com.RazorBackRoar.papyrus",
         'CFBundleVersion': "1.0.0",
         'CFBundleShortVersionString': "1.0.0",
-        'NSHumanReadableCopyright': "Copyright © 2024 RazorBackRoar",
+        'NSHumanReadableCopyright': "Copyright © 2025 RazorBackRoar",
         'NSHighResolutionCapable': True,
         'NSRequiresAquaSystemAppearance': False,
         'LSArchitecturePriority': ['arm64'],
