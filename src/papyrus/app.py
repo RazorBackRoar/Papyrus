@@ -454,6 +454,18 @@ class HTMLConverterApp(QMainWindow):
         dlg.resize(700, 500)
         self._history_dialog = dlg
         outer = QVBoxLayout(dlg)
+        
+        # Header with Clear button
+        header_layout = QHBoxLayout()
+        header_layout.addWidget(QLabel("Saved Conversions"))
+        header_layout.addStretch()
+        clear_btn = QPushButton("Clear History")
+        clear_btn.setFixedSize(120, 30)
+        clear_btn.setStyleSheet(f"background-color: {self.colors['lighter_grey']}; font-size: 12px; padding: 5px;")
+        clear_btn.clicked.connect(self.clear_history)
+        header_layout.addWidget(clear_btn)
+        outer.addLayout(header_layout)
+
         scroll = QScrollArea(dlg)
         scroll.setWidgetResizable(True)
         outer.addWidget(scroll)
@@ -467,6 +479,17 @@ class HTMLConverterApp(QMainWindow):
         dlg.exec()
         self._history_dialog = None
         self._history_list_layout = None
+
+    def clear_history(self):
+        if not self.history_entries:
+            return
+        reply = QMessageBox.question(self._history_dialog, "Confirm Clear", 
+                                   "Are you sure you want to clear all history?",
+                                   QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if reply == QMessageBox.StandardButton.Yes:
+            self.history_entries = []
+            self.save_history()
+            self._populate_history_list()
 
     def _populate_history_list(self):
         layout = getattr(self, "_history_list_layout", None)

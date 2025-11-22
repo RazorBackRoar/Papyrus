@@ -60,6 +60,12 @@ def build():
     print("💿 Creating the distributable DMG...")
     if shutil.which("create-dmg"):
         dmg_name = "Papyrus-v1.0.0-macOS.dmg"
+        dmg_path = os.path.join("dist", dmg_name)
+
+        # Remove existing DMG if it exists
+        if os.path.exists(dmg_path):
+            print(f"   Removing existing DMG: {dmg_path}")
+            os.remove(dmg_path)
 
         # Clean staging directory first to avoid size bloat
         staging_dir = "dist/dmg_source"
@@ -88,11 +94,6 @@ def build():
         # Create DMG from staging directory
         # Window size: 410x420
         # Window position: 200,200 (avoid left edge where dock is)
-        # Layout (4 icons in 2x2 grid):
-        #  - Papyrus.app: (100, 105)
-        #  - Applications: (310, 105)
-        #  - LICENSE: (100, 295)
-        #  - README.md: (310, 295)
         run_command(f"create-dmg \
             --volname 'Papyrus Installer' \
             --window-pos 200 200 \
@@ -105,10 +106,15 @@ def build():
             --icon 'README.md' 310 295 \
             --hide-extension 'Papyrus.app' \
             --no-internet-enable \
-            'dist/{dmg_name}' \
+            '{dmg_path}' \
             '{staging_dir}'")
 
-        print(f"🎉 Build Complete! DMG at dist/{dmg_name}")
+        # Cleanup staging directory after successful build to save space
+        print("   Cleaning up staging directory...")
+        if os.path.exists(staging_dir):
+            shutil.rmtree(staging_dir)
+
+        print(f"🎉 Build Complete! DMG at {dmg_path}")
     else:
         print("⚠️ 'create-dmg' not found. Skipping DMG creation.")
         print("Install it with: brew install create-dmg")
