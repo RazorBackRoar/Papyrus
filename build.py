@@ -110,15 +110,15 @@ def build():
         settings = {
             'volume_name': 'Papyrus Installer',
             'format': 'UDZO',
-            'window_rect': ((200, 200), (540, 580)),
+            'window_rect': ((200, 200), (540, 550)),
             'icon_size': 100,
             'files': [app_path, 'LICENSE.txt', 'README.md'],
             'symlinks': {'Applications': '/Applications'},
             'icon_locations': {
-                'Papyrus.app': (140, 160),
-                'Applications': (400, 160),
-                'LICENSE.txt': (140, 400),
-                'README.md': (400, 400)
+                'Papyrus.app': (140, 120),
+                'Applications': (400, 120),
+                'LICENSE.txt': (140, 340),
+                'README.md': (400, 340)
             }
         }
         
