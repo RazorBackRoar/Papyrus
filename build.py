@@ -33,9 +33,9 @@ def create_qt_conf(app_path):
     resources_path = os.path.join(app_path, "Contents", "Resources")
     qt_conf_path = os.path.join(resources_path, "qt.conf")
     
-    # Qt searches relative to the executable (in MacOS/), so we need ../Resources/qt_plugins
+    # Point to PySide6's bundled plugins (py2app already includes them)
     qt_conf_content = """[Paths]
-Plugins = ../Resources/qt_plugins
+Plugins = ../Resources/lib/python3.13/PySide6/Qt/plugins
 """
     
     with open(qt_conf_path, 'w') as f:

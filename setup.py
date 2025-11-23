@@ -4,31 +4,10 @@ sys.path.insert(0, 'src')
 
 from setuptools import setup
 
-# Find PySide6 installation to bundle Qt plugins
-try:
-    import PySide6
-    pyside6_path = os.path.dirname(PySide6.__file__)
-    qt_plugins_src = os.path.join(pyside6_path, 'Qt', 'plugins')
-    
-    # Build plugin data files list
-    plugin_data = []
-    if os.path.exists(qt_plugins_src):
-        for plugin_category in os.listdir(qt_plugins_src):
-            src_category = os.path.join(qt_plugins_src, plugin_category)
-            if os.path.isdir(src_category):
-                dest_category = f'qt_plugins/{plugin_category}'
-                for plugin_file in os.listdir(src_category):
-                    src_file = os.path.join(src_category, plugin_file)
-                    if os.path.isfile(src_file):
-                        plugin_data.append((dest_category, [src_file]))
-except Exception as e:
-    print(f"Warning: Could not locate PySide6 plugins: {e}")
-    plugin_data = []
-
 APP = ['src/main.py']
 DATA_FILES = [
     ('assets', ['src/assets/papyrus.icns']),
-] + plugin_data
+]
 
 OPTIONS = {
     'argv_emulation': True,
