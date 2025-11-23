@@ -72,7 +72,7 @@ def build():
     # Run py2app
     print("📦 Building application with py2app...")
     try:
-        run_command("python3 setup.py py2app")
+        run_command(f"{sys.executable} setup.py py2app")
     except SystemExit:
         # Check if app was created despite error
         if not os.path.exists("dist/Papyrus.app"):
