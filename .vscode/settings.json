@@ -1,0 +1,6 @@
+{
+  "editor.aiStats.enabled": true,
+  "editor.wordWrap": "on",
+  "files.autoSave": "afterDelay",
+  "editor.fontSize": 14
+}
