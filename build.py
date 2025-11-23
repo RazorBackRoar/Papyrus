@@ -136,6 +136,46 @@ def build():
     else:
         print("⏭️ Skipping signing: 'codesign' not available")
 
+    # --- Patching for Qt Version Mismatch & RPATH ---
+    print("🔧 Patching binaries for Qt version mismatch and RPATH...")
+    qt_core_path = os.path.join(
+        app_path,
+        "Contents",
+        "Resources",
+        "lib",
+        "python3.13",
+        "PySide6",
+        "QtCore.abi3.so",
+    )
+    executable_path = os.path.join(app_path, "Contents", "MacOS", "Papyrus")
+
+    # 1. Patch QtCore.abi3.so to point to 6.10 instead of 6.9
+    if os.path.exists(qt_core_path):
+        run_command(
+            f"install_name_tool -change @rpath/libpyside6.abi3.6.9.dylib @rpath/libpyside6.abi3.6.10.dylib '{qt_core_path}'"
+        )
+        run_command(
+            f"install_name_tool -change @rpath/libshiboken6.abi3.6.9.dylib @rpath/libshiboken6.abi3.6.10.dylib '{qt_core_path}'"
+        )
+        # Re-sign after patching
+        if shutil.which("codesign"):
+            run_command(f"codesign --force --sign - '{qt_core_path}'")
+
+    # 2. Add RPATH to executable
+    if os.path.exists(executable_path):
+        # Check if RPATH already exists to avoid error
+        try:
+            run_command(
+                f"install_name_tool -add_rpath @executable_path/../Frameworks '{executable_path}'"
+            )
+            # Re-sign after patching
+            if shutil.which("codesign"):
+                run_command(f"codesign --force --sign - '{executable_path}'")
+        except SystemExit:
+            print("   (RPATH might already exist or failed to add, proceeding...)")
+
+    # ------------------------------------------------
+
     # Create DMG
     print("💿 Creating the distributable DMG...")
 
