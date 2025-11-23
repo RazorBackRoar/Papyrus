@@ -11,7 +11,7 @@ DATA_FILES = [
 OPTIONS = {
     'argv_emulation': True,
     'iconfile': 'resources/papyrus.icns',
-    'packages': ['PySide6'],
+    'packages': ['PySide6', 'bs4'],
     'includes': ['PySide6.QtCore', 'PySide6.QtGui', 'PySide6.QtWidgets', 'PySide6.QtPrintSupport'],
     'excludes': [
         'tkinter', 'numpy', 'pandas', 'matplotlib', 'scipy', 'IPython', 'jupyter_client', 'ipykernel', 'tornado', 'zmq', 'PIL', 'cv2',
