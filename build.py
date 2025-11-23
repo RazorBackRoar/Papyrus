@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import sys
 
+
 def run_command(command):
     print(f"Running: {command}")
     try:
@@ -11,21 +12,23 @@ def run_command(command):
         print(f"Error running command: {command}")
         sys.exit(1)
 
+
 def eject_dmg(volname):
     """Ejects the DMG volume if it is mounted."""
     try:
         result = subprocess.run(
-            ['hdiutil', 'info'],
-            capture_output=True,
-            text=True,
-            check=True
+            ["hdiutil", "info"], capture_output=True, text=True, check=True
         )
         if volname in result.stdout:
             print(f"   Ejecting existing '{volname}' volume...")
-            subprocess.run(['hdiutil', 'detach', f"/Volumes/{volname}"],
-                         capture_output=True, check=False)
+            subprocess.run(
+                ["hdiutil", "detach", f"/Volumes/{volname}"],
+                capture_output=True,
+                check=False,
+            )
     except subprocess.CalledProcessError:
         pass
+
 
 def create_qt_conf(app_path):
     print("📝 Creating qt.conf for Qt plugin resolution...")
@@ -34,28 +37,57 @@ def create_qt_conf(app_path):
     py_ver = f"python{sys.version_info.major}.{sys.version_info.minor}"
     plugins_rel = f"../Resources/lib/{py_ver}/PySide6/Qt/plugins"
     qt_conf_content = f"[Paths]\nPlugins = {plugins_rel}\n"
-    with open(qt_conf_path, 'w') as f:
+    with open(qt_conf_path, "w") as f:
         f.write(qt_conf_content)
     print(f"   Created {qt_conf_path} -> {plugins_rel}")
+
 
 def clean_frameworks(app_path):
     """Manually removes unused frameworks to reduce app size."""
     print("🧹 Manually removing unused frameworks...")
     frameworks_path = os.path.join(app_path, "Contents", "Frameworks")
-    resources_qt_path = os.path.join(app_path, "Contents", "Resources", "lib", "python3.13", "PySide6", "Qt", "lib")
+    resources_qt_path = os.path.join(
+        app_path, "Contents", "Resources", "lib", "python3.13", "PySide6", "Qt", "lib"
+    )
 
     unused_frameworks = [
-        "QtWebEngineCore.framework", "QtWebEngineWidgets.framework", "QtWebEngineQuick.framework",
-        "QtDesigner.framework", "QtQuick3D.framework", "QtQuick3DRuntimeRender.framework", "QtQuick3DUtils.framework",
-        "QtDataVisualization.framework", "QtCharts.framework", "QtLocation.framework",
-        "QtMultimedia.framework", "QtMultimediaWidgets.framework", "QtSensors.framework",
-        "QtSerialPort.framework", "QtSql.framework", "QtTest.framework", "QtTextToSpeech.framework",
-        "QtXml.framework", "QtBluetooth.framework", "QtNfc.framework", "QtPositioning.framework",
-        "QtPositioningQuick.framework", "QtRemoteObjects.framework", "QtScxml.framework",
-        "QtStateMachine.framework", "QtWebChannel.framework", "QtWebChannelQuick.framework",
-        "QtWebSockets.framework", "QtPdf.framework", "QtPdfWidgets.framework",
-        "QtVirtualKeyboard.framework", "Qt3DCore.framework", "Qt3DRender.framework",
-        "Qt3DInput.framework", "Qt3DLogic.framework", "Qt3DExtras.framework", "Qt3DAnimation.framework"
+        "QtWebEngineCore.framework",
+        "QtWebEngineWidgets.framework",
+        "QtWebEngineQuick.framework",
+        "QtDesigner.framework",
+        "QtQuick3D.framework",
+        "QtQuick3DRuntimeRender.framework",
+        "QtQuick3DUtils.framework",
+        "QtDataVisualization.framework",
+        "QtCharts.framework",
+        "QtLocation.framework",
+        "QtMultimedia.framework",
+        "QtMultimediaWidgets.framework",
+        "QtSensors.framework",
+        "QtSerialPort.framework",
+        "QtSql.framework",
+        "QtTest.framework",
+        "QtTextToSpeech.framework",
+        "QtXml.framework",
+        "QtBluetooth.framework",
+        "QtNfc.framework",
+        "QtPositioning.framework",
+        "QtPositioningQuick.framework",
+        "QtRemoteObjects.framework",
+        "QtScxml.framework",
+        "QtStateMachine.framework",
+        "QtWebChannel.framework",
+        "QtWebChannelQuick.framework",
+        "QtWebSockets.framework",
+        "QtPdf.framework",
+        "QtPdfWidgets.framework",
+        "QtVirtualKeyboard.framework",
+        "Qt3DCore.framework",
+        "Qt3DRender.framework",
+        "Qt3DInput.framework",
+        "Qt3DLogic.framework",
+        "Qt3DExtras.framework",
+        "Qt3DAnimation.framework",
     ]
 
     for base_path in [frameworks_path, resources_qt_path]:
@@ -69,6 +101,7 @@ def clean_frameworks(app_path):
                     shutil.rmtree(fw_path)
                 else:
                     os.remove(fw_path)
+
 
 def build():
     print("🧹 Cleaning up previous builds...")
@@ -116,33 +149,36 @@ def build():
 
     try:
         import dmgbuild
+
         print("   Using dmgbuild to create customized DMG...")
 
         # Define settings programmatically to avoid path issues
         settings = {
-            'volume_name': 'Papyrus Installer',
-            'format': 'UDZO',
-            'window_rect': ((200, 200), (540, 550)),
-            'icon_size': 100,
-            'files': [app_path, 'LICENSE.txt', 'README.md'],
-            'symlinks': {'Applications': '/Applications'},
-            'icon_locations': {
-                'Papyrus.app': (140, 120),
-                'Applications': (400, 120),
-                'LICENSE.txt': (140, 340),
-                'README.md': (400, 340)
-            }
+            "volume_name": "Papyrus Installer",
+            "format": "UDZO",
+            "window_rect": ((200, 200), (540, 550)),
+            "icon_size": 100,
+            "files": [app_path, "LICENSE.txt", "README.md"],
+            "symlinks": {"Applications": "/Applications"},
+            "icon_locations": {
+                "Papyrus.app": (140, 120),
+                "Applications": (400, 120),
+                "LICENSE.txt": (140, 340),
+                "README.md": (400, 340),
+            },
         }
 
-        dmgbuild.build_dmg(dmg_path, 'Papyrus Installer', settings=settings)
+        dmgbuild.build_dmg(dmg_path, "Papyrus Installer", settings=settings)
 
         # Cleanup .app bundle to save space/confusion
-        if os.path.exists(app_path):
-            print(f"🧹 Removing intermediate {app_path}...")
-            shutil.rmtree(app_path)
+        # if os.path.exists(app_path):
+        #     print(f"🧹 Removing intermediate {app_path}...")
+        #     shutil.rmtree(app_path)
 
         print(f"🎉 Build Complete! DMG at {dmg_path}")
-        print("👉 NOTE: Please open the DMG manually and drag Papyrus.app into /Applications")
+        print(
+            "👉 NOTE: Please open the DMG manually and drag Papyrus.app into /Applications"
+        )
 
     except ImportError:
         print("⚠️ 'dmgbuild' not found. Falling back to simple hdiutil...")
@@ -159,17 +195,22 @@ def build():
         shutil.copy("README.md", staging_dir)
         os.symlink("/Applications", os.path.join(staging_dir, "Applications"))
 
-        run_command(f"hdiutil create -volname 'Papyrus Installer' -srcfolder '{staging_dir}' -ov -format UDZO '{dmg_path}'")
+        run_command(
+            f"hdiutil create -volname 'Papyrus Installer' -srcfolder '{staging_dir}' -ov -format UDZO '{dmg_path}'"
+        )
 
         # Cleanup
         shutil.rmtree(staging_dir)
         # Cleanup .app bundle to save space/confusion
-        if os.path.exists(app_path):
-            print(f"🧹 Removing intermediate {app_path}...")
-            shutil.rmtree(app_path)
+        # if os.path.exists(app_path):
+        #     print(f"🧹 Removing intermediate {app_path}...")
+        #     shutil.rmtree(app_path)
 
         print(f"✅ Build Complete! (Standard layout) DMG at {dmg_path}")
-        print("👉 NOTE: Please open the DMG manually and drag Papyrus.app into /Applications")
+        print(
+            "👉 NOTE: Please open the DMG manually and drag Papyrus.app into /Applications"
+        )
+
 
 if __name__ == "__main__":
     build()
