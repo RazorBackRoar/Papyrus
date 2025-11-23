@@ -30,7 +30,7 @@ Papyrus is a beautiful, modern HTML to PDF converter and previewer for macOS. It
 
 3. Run the application:
    ```bash
-   python3 -m papyrus.main
+   python3 main.py
    ```
 
 ## Building

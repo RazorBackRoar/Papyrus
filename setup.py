@@ -3,7 +3,7 @@ sys.path.insert(0, 'src')
 
 from setuptools import setup
 
-APP = ['run.py']
+APP = ['main.py']
 DATA_FILES = [
     ('resources', ['resources/papyrus.icns']),
 ]

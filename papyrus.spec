@@ -12,7 +12,7 @@ icon_file = os.path.join(project_root, 'resources', 'papyrus.icns')
 
 # --- Analysis: Finding Dependencies ---
 a = Analysis(
-    ['run.py'],
+    ['main.py'],
     pathex=['src'], 
     binaries=[],
     datas=[
