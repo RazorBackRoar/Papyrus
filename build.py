@@ -94,14 +94,14 @@ def build():
     create_qt_conf(app_path)
     clean_frameworks(app_path)
 
-    # Sign the app (ad-hoc)
-    print("✍️ Signing the .app bundle (ad-hoc)...")
     app_path = "dist/Papyrus.app"
-    run_command(f"codesign --force --deep --sign - '{app_path}'")
-
-    # Verify signature
-    print("✅ Verifying the ad-hoc signature...")
-    run_command(f"codesign --verify --deep --strict --verbose=2 '{app_path}'")
+    if shutil.which("codesign"):
+        print("✍️ Signing the .app bundle (ad-hoc)...")
+        run_command(f"codesign --force --deep --sign - '{app_path}'")
+        print("✅ Verifying the ad-hoc signature...")
+        run_command(f"codesign --verify --deep --strict --verbose=2 '{app_path}'")
+    else:
+        print("⏭️ Skipping signing: 'codesign' not available")
 
     # Create DMG
     print("💿 Creating the distributable DMG...")
