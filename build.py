@@ -157,6 +157,14 @@ def build():
         run_command(
             f"install_name_tool -change @rpath/libshiboken6.abi3.6.9.dylib @rpath/libshiboken6.abi3.6.10.dylib '{qt_core_path}'"
         )
+        # Remove system RPATH to prevent loading system Qt
+        try:
+            run_command(
+                f"install_name_tool -delete_rpath /opt/homebrew/lib '{qt_core_path}'"
+            )
+        except SystemExit:
+            print("   (RPATH /opt/homebrew/lib not found or already removed)")
+
         # Re-sign after patching
         if shutil.which("codesign"):
             run_command(f"codesign --force --sign - '{qt_core_path}'")
