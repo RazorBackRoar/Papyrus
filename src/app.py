@@ -14,9 +14,9 @@ from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon, QPalette, QColor, QKeySequence, QShortcut
 
-from .utils import resource_path
-from .editor import PagedTextEdit
-from .highlighter import HTMLSyntaxHighlighter
+from utils.helpers import resource_path
+from ui.editor import PagedTextEdit
+from ui.highlighter import HTMLSyntaxHighlighter
 
 class HTMLConverterApp(QMainWindow):
     def __init__(self):
@@ -41,7 +41,7 @@ class HTMLConverterApp(QMainWindow):
 
     def init_ui(self):
         self.setWindowTitle("Papyrus v1.0.0")
-        self.setWindowIcon(QIcon(resource_path("resources/papyrus.icns")))
+        self.setWindowIcon(QIcon(resource_path("assets/papyrus.icns")))
         self.setGeometry(100, 100, 1000, 800)
         self.setMinimumSize(600, 500)
         self.setStyleSheet(f"""
@@ -141,9 +141,7 @@ class HTMLConverterApp(QMainWindow):
         self.add_wrapper_checkbox = QCheckBox("Add styling wrapper (adds beautiful dark theme if HTML lacks styles)")
         self.add_wrapper_checkbox.setChecked(True)
         settings_layout.addWidget(self.add_wrapper_checkbox)
-        self.auto_open_checkbox = QCheckBox("Automatically open in default browser after conversion")
-        self.auto_open_checkbox.setChecked(True)
-        settings_layout.addWidget(self.auto_open_checkbox)
+        # Auto-open checkbox removed
         self.add_print_bands_checkbox = QCheckBox("Add repeated print bands (top & bottom) in print output")
         self.add_print_bands_checkbox.setChecked(False)
         settings_layout.addWidget(self.add_print_bands_checkbox)
@@ -389,11 +387,9 @@ class HTMLConverterApp(QMainWindow):
             with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False) as f:
                 f.write(final_html)
                 temp_path = f.name
-            if self.auto_open_checkbox.isChecked():
-                if platform.system() == "Darwin":
-                    subprocess.run(['open', '-a', 'Safari', temp_path], check=True)
-                else:
-                    webbrowser.open('file://' + temp_path)
+            
+            # Auto-open removed - user must open manually or we can provide a button/link
+            # For now, just show the path
             self._save_history_if_titled(html_content)
             self.status_label.setText(f"✅ Generated! File: {temp_path} | Press ⌘+P to print")
             self.save_history()

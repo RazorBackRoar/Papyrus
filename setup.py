@@ -3,14 +3,14 @@ sys.path.insert(0, 'src')
 
 from setuptools import setup
 
-APP = ['main.py']
+APP = ['src/main.py']
 DATA_FILES = [
-    ('resources', ['resources/papyrus.icns']),
+    ('assets', ['src/assets/papyrus.icns']),
 ]
 
 OPTIONS = {
     'argv_emulation': True,
-    'iconfile': 'resources/papyrus.icns',
+    'iconfile': 'src/assets/papyrus.icns',
     'packages': ['PySide6', 'bs4'],
     'includes': ['PySide6.QtCore', 'PySide6.QtGui', 'PySide6.QtWidgets', 'PySide6.QtPrintSupport'],
     'excludes': [

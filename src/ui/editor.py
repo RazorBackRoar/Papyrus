@@ -2,7 +2,7 @@
 from PySide6.QtWidgets import QTextEdit, QApplication
 from PySide6.QtCore import Qt, QMimeData
 from PySide6.QtGui import QColor, QPainter, QPen
-from .utils import clean_pasted_html
+from utils.helpers import clean_pasted_html
 
 class PagedTextEdit(QTextEdit):
     """Text editor with visual page break indicators and HTML paste handling."""
