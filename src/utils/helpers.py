@@ -4,7 +4,7 @@ import os
 from bs4 import BeautifulSoup
 
 def resource_path(relative_path):
-    """Get absolute path to resource, works for dev and for PyInstaller.
+    """Get absolute path to resource, works for dev and for PyInstaller/py2app.
 
     Args:
         relative_path: Relative path to the resource file
@@ -12,17 +12,22 @@ def resource_path(relative_path):
     Returns:
         Absolute path to the resource
     """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        # pylint: disable=protected-access,no-member
+    if hasattr(sys, '_MEIPASS'):
+        # PyInstaller
         base_path = sys._MEIPASS
-    except AttributeError:
-        base_path = os.path.abspath(".")
+    elif 'RESOURCEPATH' in os.environ:
+        # py2app
+        base_path = os.environ['RESOURCEPATH']
+    else:
+        # Development: helpers.py is in src/utils/
+        # We want the base to be src/
+        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     return os.path.join(base_path, relative_path)
 
 def clean_pasted_html(text: str) -> str:
     """Clean and format pasted HTML using BeautifulSoup.
-    
+
     This function parses the input HTML, fixes malformed tags, and returns
     a pretty-printed version. If the input is not valid HTML, it returns
     the original text.
@@ -35,11 +40,11 @@ def clean_pasted_html(text: str) -> str:
     """
     if not text or not text.strip():
         return text
-        
+
     try:
         # Use html.parser as it's built-in, though lxml is faster if available
         soup = BeautifulSoup(text, 'html.parser')
-        
+
         # If it's just a fragment, we might want to keep it as a fragment
         # But for now, let's just pretty print whatever we get
         return soup.prettify()

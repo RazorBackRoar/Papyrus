@@ -7,10 +7,25 @@ import platform
 from datetime import datetime
 from functools import partial
 
-from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-                               QTextEdit, QPushButton, QLabel, QTabWidget,
-                               QCheckBox, QMessageBox, QFrame, QLineEdit,
-                               QSpinBox, QScrollArea, QDialog, QSizePolicy, QApplication)
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QTextEdit,
+    QPushButton,
+    QLabel,
+    QTabWidget,
+    QCheckBox,
+    QMessageBox,
+    QFrame,
+    QLineEdit,
+    QSpinBox,
+    QScrollArea,
+    QDialog,
+    QSizePolicy,
+    QApplication,
+)
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon, QPalette, QColor, QKeySequence, QShortcut
 
@@ -18,20 +33,21 @@ from utils.helpers import resource_path
 from ui.editor import PagedTextEdit
 from ui.highlighter import HTMLSyntaxHighlighter
 
+
 class HTMLConverterApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.colors = {
-            'dark_grey': '#1e1e1e',
-            'deep_orange': '#FF5A09',
-            'light_orange': '#EC7F37',
-            'orange_yellow': '#BE4F0C',
-            'bright_blue': '#2a9df4',
-            'darker_grey': '#141414',
-            'lighter_grey': '#2c2c2c',
-            'white': '#FFFFFF',
-            'text_bg': '#1e1e1e',
-            'text_fg': '#f0f0f0'
+            "dark_grey": "#1e1e1e",
+            "deep_orange": "#FF5A09",
+            "light_orange": "#EC7F37",
+            "orange_yellow": "#BE4F0C",
+            "bright_blue": "#2a9df4",
+            "darker_grey": "#141414",
+            "lighter_grey": "#2c2c2c",
+            "white": "#FFFFFF",
+            "text_bg": "#1e1e1e",
+            "text_fg": "#f0f0f0",
         }
         self.init_ui()
         self.setup_shortcuts()
@@ -43,8 +59,10 @@ class HTMLConverterApp(QMainWindow):
         self.setWindowTitle("Papyrus")
         self.setWindowIcon(QIcon(resource_path("assets/papyrus.icns")))
         self.setGeometry(100, 100, 1000, 800)
+        self.center_on_screen()
         self.setMinimumSize(600, 500)
-        self.setStyleSheet(f"""
+        self.setStyleSheet(
+            f"""
             QMainWindow {{ background-color: {self.colors['dark_grey']}; }}
             QWidget {{ background-color: {self.colors['dark_grey']}; color: {self.colors['white']}; }}
             QTabWidget {{ background-color: {self.colors['darker_grey']}; border: none; }}
@@ -75,7 +93,8 @@ class HTMLConverterApp(QMainWindow):
             QScrollArea {{ background-color: {self.colors['dark_grey']}; border: none; }}
             QPushButton#historyItemButton {{ background-color: {self.colors['lighter_grey']}; color: {self.colors['deep_orange']}; border: none; border-radius: 10px; padding: 12px 16px; text-align: left; }}
             QPushButton#historyItemButton:hover {{ background-color: {self.colors['orange_yellow']}; color: {self.colors['white']}; }}
-        """)
+        """
+        )
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         main_layout = QVBoxLayout(central_widget)
@@ -103,7 +122,9 @@ class HTMLConverterApp(QMainWindow):
         title_row = QHBoxLayout()
         title_row.addWidget(QLabel("Title:"))
         self.title_input = QLineEdit()
-        self.title_input.setPlaceholderText("Give this conversion a title to save it in History")
+        self.title_input.setPlaceholderText(
+            "Give this conversion a title to save it in History"
+        )
         title_row.addWidget(self.title_input)
         input_layout.addLayout(title_row)
         self.title_input.returnPressed.connect(self.save_title_to_history)
@@ -112,7 +133,7 @@ class HTMLConverterApp(QMainWindow):
         self.text_editor.set_show_page_breaks(False)
         self.text_editor.setFrameShape(QFrame.Shape.NoFrame)
         palette = self.text_editor.palette()
-        bg_color = QColor(self.colors['text_bg'])
+        bg_color = QColor(self.colors["text_bg"])
         palette.setColor(QPalette.ColorRole.Base, bg_color)
         palette.setColor(QPalette.ColorRole.Window, bg_color)
         palette.setColor(QPalette.ColorRole.AlternateBase, bg_color)
@@ -120,7 +141,7 @@ class HTMLConverterApp(QMainWindow):
         palette.setColor(QPalette.ColorRole.Mid, bg_color)
         palette.setColor(QPalette.ColorRole.Dark, bg_color)
         palette.setColor(QPalette.ColorRole.Shadow, bg_color)
-        text_color = QColor(self.colors['text_fg'])
+        text_color = QColor(self.colors["text_fg"])
         palette.setColor(QPalette.ColorRole.Text, text_color)
         palette.setColor(QPalette.ColorRole.WindowText, text_color)
         palette.setColor(QPalette.ColorRole.ButtonText, text_color)
@@ -138,21 +159,29 @@ class HTMLConverterApp(QMainWindow):
         settings_layout = QVBoxLayout(settings_tab)
         settings_layout.setContentsMargins(20, 20, 20, 20)
         settings_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.add_wrapper_checkbox = QCheckBox("Add styling wrapper (adds beautiful dark theme if HTML lacks styles)")
+        self.add_wrapper_checkbox = QCheckBox(
+            "Add styling wrapper (adds beautiful dark theme if HTML lacks styles)"
+        )
         self.add_wrapper_checkbox.setChecked(True)
         settings_layout.addWidget(self.add_wrapper_checkbox)
         # Auto-open checkbox removed
-        self.add_print_bands_checkbox = QCheckBox("Add repeated print bands (top & bottom) in print output")
+        self.add_print_bands_checkbox = QCheckBox(
+            "Add repeated print bands (top & bottom) in print output"
+        )
         self.add_print_bands_checkbox.setChecked(False)
         settings_layout.addWidget(self.add_print_bands_checkbox)
         # Enable copyable HTML code in PDF mode (escape and render as code)
-        self.enable_pdf_copy_checkbox = QCheckBox("Enable copyable HTML code in PDF (escape and render as code)")
+        self.enable_pdf_copy_checkbox = QCheckBox(
+            "Enable copyable HTML code in PDF (escape and render as code)"
+        )
         self.enable_pdf_copy_checkbox.setChecked(False)
         settings_layout.addWidget(self.enable_pdf_copy_checkbox)
         band_text_row = QHBoxLayout()
         band_text_label = QLabel("Band text:")
         self.print_band_text = QLineEdit("Papyrus HTML Converter")
-        self.print_band_text.setPlaceholderText("Text to repeat across the top/bottom of each printed page")
+        self.print_band_text.setPlaceholderText(
+            "Text to repeat across the top/bottom of each printed page"
+        )
         band_text_row.addWidget(band_text_label)
         band_text_row.addWidget(self.print_band_text)
         settings_layout.addLayout(band_text_row)
@@ -193,13 +222,26 @@ class HTMLConverterApp(QMainWindow):
         shortcuts_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(shortcuts_label)
 
+    def center_on_screen(self):
+        screen = QApplication.primaryScreen()
+        geometry = screen.availableGeometry()
+        frame_geometry = self.frameGeometry()
+        frame_geometry.moveCenter(geometry.center())
+        self.move(frame_geometry.topLeft())
+
     def _init_history_storage(self) -> None:
         try:
-            base_dir = os.path.join(os.path.expanduser("~"), "Library" if platform.system() == "Darwin" else "AppData/Local", "HTMLConverter")
+            base_dir = os.path.join(
+                os.path.expanduser("~"),
+                "Library" if platform.system() == "Darwin" else "AppData/Local",
+                "HTMLConverter",
+            )
             os.makedirs(base_dir, exist_ok=True)
             self.history_file = os.path.join(base_dir, "history.json")
         except Exception:
-            self.history_file = os.path.join(tempfile.gettempdir(), "html_converter_history.json")
+            self.history_file = os.path.join(
+                tempfile.gettempdir(), "html_converter_history.json"
+            )
         self.load_history()
 
     def load_history(self) -> None:
@@ -208,7 +250,13 @@ class HTMLConverterApp(QMainWindow):
                 with open(self.history_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
                 if isinstance(data, list):
-                    cleaned = [item for item in data[:self.MAX_HISTORY] if isinstance(item, dict) and 'title' in item and 'content' in item]
+                    cleaned = [
+                        item
+                        for item in data[: self.MAX_HISTORY]
+                        if isinstance(item, dict)
+                        and "title" in item
+                        and "content" in item
+                    ]
                     self.history_entries = cleaned
         except Exception:
             self.history_entries = []
@@ -216,7 +264,12 @@ class HTMLConverterApp(QMainWindow):
     def save_history(self) -> None:
         try:
             with open(self.history_file, "w", encoding="utf-8") as f:
-                json.dump(self.history_entries[:self.MAX_HISTORY], f, ensure_ascii=False, indent=2)
+                json.dump(
+                    self.history_entries[: self.MAX_HISTORY],
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
         except Exception:
             pass
 
@@ -229,9 +282,9 @@ class HTMLConverterApp(QMainWindow):
     def get_styled_wrapper(self, content):
         if not self.add_wrapper_checkbox.isChecked():
             return content
-        if '<html' in content.lower() and '<body' in content.lower():
+        if "<html" in content.lower() and "<body" in content.lower():
             return content
-        wrapper = f'''<!DOCTYPE html>
+        wrapper = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -260,25 +313,27 @@ class HTMLConverterApp(QMainWindow):
         {content}
     </div>
 </body>
-</html>'''
+</html>"""
         return wrapper
 
     def build_copyable_code_view(self, raw_html: str) -> str:
         """Return an escaped <pre><code> block for copyable HTML source.
         Avoid importing stdlib html due to module name conflict with this file.
         """
+
         def _escape(s: str) -> str:
             # Order matters: ampersand first
-            s = s.replace('&', '&amp;')
-            s = s.replace('<', '&lt;').replace('>', '&gt;')
-            s = s.replace('"', '&quot;')
+            s = s.replace("&", "&amp;")
+            s = s.replace("<", "&lt;").replace(">", "&gt;")
+            s = s.replace('"', "&quot;")
             return s
+
         escaped = _escape(raw_html)
         return (
             '<section class="code-view">\n'
             '  <h2 style="margin-bottom:12px;color:#ffa86b;font-weight:600;">HTML Source</h2>\n'
-            '  <pre><code>' + escaped + '</code></pre>\n'
-            '</section>'
+            "  <pre><code>" + escaped + "</code></pre>\n"
+            "</section>"
         )
 
     def sanitize_for_pdf_copy(self, html: str) -> str:
@@ -289,30 +344,43 @@ class HTMLConverterApp(QMainWindow):
         - Inject style to enforce selectable, monospace code and sane wrapping
         """
         # Normalize line endings
-        s = html.replace('\r\n', '\n').replace('\r', '\n')
+        s = html.replace("\r\n", "\n").replace("\r", "\n")
         # Replace NBSP and narrow NBSP with regular spaces
-        s = s.replace('\xa0', ' ').replace('\u202f', ' ')
+        s = s.replace("\xa0", " ").replace("\u202f", " ")
         # Remove BOM, zero-width, directional marks, and soft hyphens
         for ch in (
-            '\ufeff',  # BOM
-            '\u200b', '\u200c', '\u200d',  # zero width
-            '\u2060',  # word joiner
-            '\u200e', '\u200f',  # LRM/RLM
-            '\u202a', '\u202b', '\u202c', '\u202d', '\u202e',  # bidi embedding/override
-            '\u2066', '\u2067', '\u2068', '\u2069',  # bidi isolates
-            '\u00ad',  # soft hyphen
+            "\ufeff",  # BOM
+            "\u200b",
+            "\u200c",
+            "\u200d",  # zero width
+            "\u2060",  # word joiner
+            "\u200e",
+            "\u200f",  # LRM/RLM
+            "\u202a",
+            "\u202b",
+            "\u202c",
+            "\u202d",
+            "\u202e",  # bidi embedding/override
+            "\u2066",
+            "\u2067",
+            "\u2068",
+            "\u2069",  # bidi isolates
+            "\u00ad",  # soft hyphen
         ):
-            s = s.replace(ch, '')
+            s = s.replace(ch, "")
         # Make non-selectable rules selectable
         for token in (
-            'user-select: none', 'user-select:none',
-            '-webkit-user-select: none', '-webkit-user-select:none',
+            "user-select: none",
+            "user-select:none",
+            "-webkit-user-select: none",
+            "-webkit-user-select:none",
         ):
-            s = s.replace(token, 'user-select: text')
+            s = s.replace(token, "user-select: text")
         for token in (
-            'pointer-events: none', 'pointer-events:none',
+            "pointer-events: none",
+            "pointer-events:none",
         ):
-            s = s.replace(token, 'pointer-events: auto')
+            s = s.replace(token, "pointer-events: auto")
         # Inject a small style block to enforce selection and monospace code
         lower = s.lower()
         style_block = """
@@ -326,11 +394,15 @@ class HTMLConverterApp(QMainWindow):
         if "</head>" in lower and "pdf-copy-sanitize" not in lower:
             idx = lower.rfind("</head>")
             s = s[:idx] + style_block + s[idx:]
-        elif "pdf-copy-sanitize" not in lower and ("<html" in lower or "<body" in lower):
+        elif "pdf-copy-sanitize" not in lower and (
+            "<html" in lower or "<body" in lower
+        ):
             s = style_block + s
         return s
 
-    def inject_print_bands(self, html: str, band_text: str, top_mm: int = 12, bottom_mm: int = 12) -> str:
+    def inject_print_bands(
+        self, html: str, band_text: str, top_mm: int = 12, bottom_mm: int = 12
+    ) -> str:
         band_text = (band_text or "").strip()
         if not band_text:
             return html
@@ -356,7 +428,7 @@ class HTMLConverterApp(QMainWindow):
         lower = html.lower()
         if "<body" in lower:
             body_start = lower.find("<body")
-            insert_after = lower.find('>', body_start) + 1
+            insert_after = lower.find(">", body_start) + 1
             html = html[:insert_after] + bands + html[insert_after:]
             return html
         if "</html>" in lower:
@@ -369,12 +441,17 @@ class HTMLConverterApp(QMainWindow):
     def open_in_browser(self):
         html_content = self.text_editor.toPlainText()
         if not html_content.strip():
-            QMessageBox.warning(self, "No Content", "Please paste some HTML code first!")
+            QMessageBox.warning(
+                self, "No Content", "Please paste some HTML code first!"
+            )
             return
         try:
             processed_html = self.sanitize_for_pdf_copy(html_content)
             # When enabled, render the sanitized content as escaped code for PDF copyability
-            if getattr(self, 'enable_pdf_copy_checkbox', None) and self.enable_pdf_copy_checkbox.isChecked():
+            if (
+                getattr(self, "enable_pdf_copy_checkbox", None)
+                and self.enable_pdf_copy_checkbox.isChecked()
+            ):
                 processed_html = self.build_copyable_code_view(processed_html)
             final_html = self.get_styled_wrapper(processed_html)
             if self.add_print_bands_checkbox.isChecked():
@@ -382,14 +459,18 @@ class HTMLConverterApp(QMainWindow):
                     final_html,
                     self.print_band_text.text(),
                     self.top_offset_mm.value(),
-                    self.bottom_offset_mm.value()
+                    self.bottom_offset_mm.value(),
                 )
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False) as f:
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".html", delete=False
+            ) as f:
                 f.write(final_html)
                 temp_path = f.name
             webbrowser.open(f"file://{temp_path}", new=2)
             self._save_history_if_titled(html_content)
-            self.status_label.setText(f"✅ Opened in browser | File: {temp_path} | Press ⌘+P to print")
+            self.status_label.setText(
+                f"✅ Opened in browser | File: {temp_path} | Press ⌘+P to print"
+            )
             self.save_history()
         except subprocess.CalledProcessError as e:
             QMessageBox.critical(self, "Error", f"Failed to open browser: {str(e)}")
@@ -411,21 +492,24 @@ class HTMLConverterApp(QMainWindow):
             self.status_label.setText("ℹ️ Title missing or duplicate; not saved")
 
     def _save_history_if_titled(self, html_content: str) -> bool:
-        title = (self.title_input.text() or '').strip()
+        title = (self.title_input.text() or "").strip()
         if not title:
             return False
         ts = datetime.now()
         timestamp_display = f"{ts.strftime('%I:%M:%S %p')} – {ts.strftime('%B %d, %Y')}"
         for e in self.history_entries:
-            if e['title'] == title and e.get('content', '') == html_content:
+            if e["title"] == title and e.get("content", "") == html_content:
                 return False
-        self.history_entries.insert(0, {
-            'title': title,
-            'timestamp': timestamp_display,
-            'content': html_content,
-        })
+        self.history_entries.insert(
+            0,
+            {
+                "title": title,
+                "timestamp": timestamp_display,
+                "content": html_content,
+            },
+        )
         if len(self.history_entries) > self.MAX_HISTORY:
-            self.history_entries = self.history_entries[:self.MAX_HISTORY]
+            self.history_entries = self.history_entries[: self.MAX_HISTORY]
         self.save_history()
         self.title_input.clear()
         return True
@@ -455,7 +539,9 @@ class HTMLConverterApp(QMainWindow):
         header_layout.addStretch()
         clear_btn = QPushButton("Clear History")
         clear_btn.setFixedSize(120, 30)
-        clear_btn.setStyleSheet(f"background-color: {self.colors['lighter_grey']}; font-size: 12px; padding: 5px;")
+        clear_btn.setStyleSheet(
+            f"background-color: {self.colors['lighter_grey']}; font-size: 12px; padding: 5px;"
+        )
         clear_btn.clicked.connect(self.clear_history)
         header_layout.addWidget(clear_btn)
         outer.addLayout(header_layout)
@@ -477,9 +563,12 @@ class HTMLConverterApp(QMainWindow):
     def clear_history(self):
         if not self.history_entries:
             return
-        reply = QMessageBox.question(self._history_dialog, "Confirm Clear",
-                                   "Are you sure you want to clear all history?",
-                                   QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        reply = QMessageBox.question(
+            self._history_dialog,
+            "Confirm Clear",
+            "Are you sure you want to clear all history?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+        )
         if reply == QMessageBox.StandardButton.Yes:
             self.history_entries = []
             self.save_history()
@@ -495,11 +584,13 @@ class HTMLConverterApp(QMainWindow):
             if w is not None:
                 w.deleteLater()
         if not self.history_entries:
-            layout.addWidget(QLabel("No saved items yet. Add a title and open in Safari to save."))
+            layout.addWidget(
+                QLabel("No saved items yet. Add a title and open in Safari to save.")
+            )
             return
         for idx, entry in enumerate(self.history_entries):
-            title = entry['title']
-            ts = entry.get('timestamp', '')
+            title = entry["title"]
+            ts = entry.get("timestamp", "")
             btn = QPushButton(f"{idx+1}. {title} – {ts}")
             btn.setObjectName("historyItemButton")
             btn.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
@@ -516,14 +607,14 @@ class HTMLConverterApp(QMainWindow):
             return
         entry = self.history_entries[index]
         dlg = QDialog(self)
-        dlg.setWindowTitle(entry['title'])
+        dlg.setWindowTitle(entry["title"])
         dlg.resize(900, 600)
         layout = QVBoxLayout(dlg)
         header = QLabel(f"{entry['title']} — {entry.get('timestamp', '')}")
         layout.addWidget(header)
         code = QTextEdit()
         code.setReadOnly(True)
-        code.setPlainText(entry.get('content', ''))
+        code.setPlainText(entry.get("content", ""))
         layout.addWidget(code)
         actions = QHBoxLayout()
         reopen_btn = QPushButton("Open in Editor")
@@ -533,17 +624,21 @@ class HTMLConverterApp(QMainWindow):
         actions.addWidget(copy_btn)
         actions.addWidget(delete_btn)
         layout.addLayout(actions)
+
         def reopen():
-            self.text_editor.setPlainText(entry.get('content', ''))
-            self.title_input.setText(entry.get('title', ''))
+            self.text_editor.setPlainText(entry.get("content", ""))
+            self.title_input.setText(entry.get("title", ""))
             dlg.accept()
+
         def copy():
-            QApplication.clipboard().setText(entry.get('content', ''))
+            QApplication.clipboard().setText(entry.get("content", ""))
+
         def delete():
             del self.history_entries[index]
             dlg.accept()
             self._populate_history_list()
             self.save_history()
+
         reopen_btn.clicked.connect(reopen)
         copy_btn.clicked.connect(copy)
         delete_btn.clicked.connect(delete)
