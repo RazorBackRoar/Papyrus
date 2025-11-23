@@ -27,6 +27,21 @@ def eject_dmg(volname):
     except subprocess.CalledProcessError:
         pass
 
+def create_qt_conf(app_path):
+    """Create qt.conf to tell Qt where to find plugins."""
+    print("📝 Creating qt.conf for Qt plugin resolution...")
+    resources_path = os.path.join(app_path, "Contents", "Resources")
+    qt_conf_path = os.path.join(resources_path, "qt.conf")
+    
+    # Qt searches relative to the executable (in MacOS/), so we need ../Resources/qt_plugins
+    qt_conf_content = """[Paths]
+Plugins = ../Resources/qt_plugins
+"""
+    
+    with open(qt_conf_path, 'w') as f:
+        f.write(qt_conf_content)
+    print(f"   Created {qt_conf_path}")
+
 def clean_frameworks(app_path):
     """Manually removes unused frameworks to reduce app size."""
     print("🧹 Manually removing unused frameworks...")
@@ -80,6 +95,7 @@ def build():
         print("⚠️ py2app exited with error, but app bundle was created. Proceeding...")
 
     app_path = "dist/Papyrus.app"
+    create_qt_conf(app_path)
     clean_frameworks(app_path)
 
     # Sign the app (ad-hoc)
