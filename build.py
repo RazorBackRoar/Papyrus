@@ -28,26 +28,22 @@ def eject_dmg(volname):
         pass
 
 def create_qt_conf(app_path):
-    """Create qt.conf to tell Qt where to find plugins."""
     print("📝 Creating qt.conf for Qt plugin resolution...")
     resources_path = os.path.join(app_path, "Contents", "Resources")
     qt_conf_path = os.path.join(resources_path, "qt.conf")
-    
-    # Point to PySide6's bundled plugins (py2app already includes them)
-    qt_conf_content = """[Paths]
-Plugins = ../Resources/lib/python3.13/PySide6/Qt/plugins
-"""
-    
+    py_ver = f"python{sys.version_info.major}.{sys.version_info.minor}"
+    plugins_rel = f"../Resources/lib/{py_ver}/PySide6/Qt/plugins"
+    qt_conf_content = f"[Paths]\nPlugins = {plugins_rel}\n"
     with open(qt_conf_path, 'w') as f:
         f.write(qt_conf_content)
-    print(f"   Created {qt_conf_path}")
+    print(f"   Created {qt_conf_path} -> {plugins_rel}")
 
 def clean_frameworks(app_path):
     """Manually removes unused frameworks to reduce app size."""
     print("🧹 Manually removing unused frameworks...")
     frameworks_path = os.path.join(app_path, "Contents", "Frameworks")
     resources_qt_path = os.path.join(app_path, "Contents", "Resources", "lib", "python3.13", "PySide6", "Qt", "lib")
-    
+
     unused_frameworks = [
         "QtWebEngineCore.framework", "QtWebEngineWidgets.framework", "QtWebEngineQuick.framework",
         "QtDesigner.framework", "QtQuick3D.framework", "QtQuick3DRuntimeRender.framework", "QtQuick3DUtils.framework",
@@ -109,7 +105,7 @@ def build():
 
     # Create DMG
     print("💿 Creating the distributable DMG...")
-    
+
     dmg_name = "Papyrus.dmg"
     dmg_path = os.path.join("dist", dmg_name)
 
@@ -121,7 +117,7 @@ def build():
     try:
         import dmgbuild
         print("   Using dmgbuild to create customized DMG...")
-        
+
         # Define settings programmatically to avoid path issues
         settings = {
             'volume_name': 'Papyrus Installer',
@@ -137,34 +133,34 @@ def build():
                 'README.md': (400, 340)
             }
         }
-        
+
         dmgbuild.build_dmg(dmg_path, 'Papyrus Installer', settings=settings)
-        
+
         # Cleanup .app bundle to save space/confusion
         if os.path.exists(app_path):
             print(f"🧹 Removing intermediate {app_path}...")
             shutil.rmtree(app_path)
-            
+
         print(f"🎉 Build Complete! DMG at {dmg_path}")
         print("👉 NOTE: Please open the DMG manually and drag Papyrus.app into /Applications")
-        
+
     except ImportError:
         print("⚠️ 'dmgbuild' not found. Falling back to simple hdiutil...")
         print("   (Install dmgbuild with: pip install dmgbuild for customized layout)")
-        
+
         # Fallback to simple DMG
         staging_dir = "dist/dmg_source"
         if os.path.exists(staging_dir):
             shutil.rmtree(staging_dir)
         os.makedirs(staging_dir, exist_ok=True)
-        
+
         shutil.copytree(app_path, os.path.join(staging_dir, "Papyrus.app"))
         shutil.copy("LICENSE.txt", staging_dir)
         shutil.copy("README.md", staging_dir)
         os.symlink("/Applications", os.path.join(staging_dir, "Applications"))
-        
+
         run_command(f"hdiutil create -volname 'Papyrus Installer' -srcfolder '{staging_dir}' -ov -format UDZO '{dmg_path}'")
-        
+
         # Cleanup
         shutil.rmtree(staging_dir)
         # Cleanup .app bundle to save space/confusion

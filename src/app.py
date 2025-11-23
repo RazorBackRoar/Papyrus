@@ -387,11 +387,9 @@ class HTMLConverterApp(QMainWindow):
             with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False) as f:
                 f.write(final_html)
                 temp_path = f.name
-            
-            # Auto-open removed - user must open manually or we can provide a button/link
-            # For now, just show the path
+            webbrowser.open(f"file://{temp_path}", new=2)
             self._save_history_if_titled(html_content)
-            self.status_label.setText(f"✅ Generated! File: {temp_path} | Press ⌘+P to print")
+            self.status_label.setText(f"✅ Opened in browser | File: {temp_path} | Press ⌘+P to print")
             self.save_history()
         except subprocess.CalledProcessError as e:
             QMessageBox.critical(self, "Error", f"Failed to open browser: {str(e)}")
@@ -450,7 +448,7 @@ class HTMLConverterApp(QMainWindow):
         dlg.resize(700, 500)
         self._history_dialog = dlg
         outer = QVBoxLayout(dlg)
-        
+
         # Header with Clear button
         header_layout = QHBoxLayout()
         header_layout.addWidget(QLabel("Saved Conversions"))
@@ -479,7 +477,7 @@ class HTMLConverterApp(QMainWindow):
     def clear_history(self):
         if not self.history_entries:
             return
-        reply = QMessageBox.question(self._history_dialog, "Confirm Clear", 
+        reply = QMessageBox.question(self._history_dialog, "Confirm Clear",
                                    "Are you sure you want to clear all history?",
                                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
