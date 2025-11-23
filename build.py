@@ -94,7 +94,7 @@ def build():
     # Create DMG
     print("💿 Creating the distributable DMG...")
     
-    dmg_name = "Papyrus-v1.0.0-macOS.dmg"
+    dmg_name = "Papyrus.dmg"
     dmg_path = os.path.join("dist", dmg_name)
 
     # Remove existing DMG if it exists
