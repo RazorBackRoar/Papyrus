@@ -56,7 +56,7 @@ class HTMLConverterApp(QMainWindow):
         self._init_history_storage()
 
     def init_ui(self):
-        self.setWindowTitle("Papyrus")
+        self.setWindowTitle("")
         self.setWindowIcon(QIcon(resource_path("assets/papyrus.icns")))
         self.setGeometry(100, 100, 1000, 800)
         self.center_on_screen()
