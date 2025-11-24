@@ -2,5 +2,7 @@
   "editor.aiStats.enabled": true,
   "editor.wordWrap": "on",
   "files.autoSave": "afterDelay",
-  "editor.fontSize": 14
+  "editor.fontSize": 14,
+  "gitlens.liveshare.allowGuestAccess": false,
+  "gitlens.telemetry.enabled": false
 }
