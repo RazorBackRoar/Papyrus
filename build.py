@@ -4,9 +4,6 @@ import subprocess
 import sys
 import re
 
-# --- Version Configuration ---
-VERSION = "1.0.0"
-
 
 def run_command(command):
     print(f"Running: {command}")
@@ -17,9 +14,47 @@ def run_command(command):
         sys.exit(1)
 
 
-def update_version():
-    """Updates the version number in setup.py from the VERSION constant."""
-    print(f"🔄 Updating version to {VERSION}...")
+def increment_version(version_str):
+    """Increments the minor version (e.g. 1.0 -> 1.1). Drops patch version if present."""
+    parts = version_str.strip().split(".")
+
+    # Default to 1.0 if empty or invalid
+    if not parts or not parts[0].isdigit():
+        return "1.0"
+
+    major = parts[0]
+    minor = 0
+    if len(parts) > 1 and parts[1].isdigit():
+        minor = int(parts[1])
+
+    # Increment minor
+    return f"{major}.{minor + 1}"
+
+
+def get_and_increment_version():
+    """Reads VERSION file, increments it, writes back, and returns new version."""
+    version_file = "VERSION"
+
+    if not os.path.exists(version_file):
+        # If missing, start at 1.0
+        current = "0.9"
+    else:
+        with open(version_file, "r") as f:
+            current = f.read().strip()
+
+    new_version = increment_version(current)
+
+    print(f"🔖 Incrementing version: {current} -> {new_version}")
+
+    with open(version_file, "w") as f:
+        f.write(new_version)
+
+    return new_version
+
+
+def update_setup_version(version):
+    """Updates the version number in setup.py."""
+    print(f"🔄 Updating setup.py to version {version}...")
 
     setup_path = "setup.py"
     if not os.path.exists(setup_path):
@@ -31,21 +66,20 @@ def update_version():
 
     # Update CFBundleVersion
     content = re.sub(
-        r'"CFBundleVersion":\s*"[^"]+"', f'"CFBundleVersion": "{VERSION}"', content
+        r'"CFBundleVersion":\s*"[^"]+"', f'"CFBundleVersion": "{version}"', content
     )
 
     # Update CFBundleShortVersionString
     content = re.sub(
         r'"CFBundleShortVersionString":\s*"[^"]+"',
-        f'"CFBundleShortVersionString": "{VERSION}"',
+        f'"CFBundleShortVersionString": "{version}"',
         content,
     )
 
-    # Update CFBundleGetInfoString (ensure version is appended correctly)
-    # First, reset it to base string to avoid duplication
+    # Update CFBundleGetInfoString
     content = re.sub(
-        r'"CFBundleGetInfoString":\s*"[^"]+"',
-        f'"CFBundleGetInfoString": "Papyrus HTML Converter {VERSION}"',
+        r'"CFBundleGetInfoString":\s*"Papyrus HTML Converter.*"',
+        f'"CFBundleGetInfoString": "Papyrus HTML Converter {version}"',
         content,
     )
 
@@ -147,7 +181,11 @@ def clean_frameworks(app_path):
 
 def build():
     print("🧹 Cleaning up previous builds...")
-    update_version()
+
+    # Auto-increment version
+    new_ver = get_and_increment_version()
+    update_setup_version(new_ver)
+
     eject_dmg("Papyrus Installer")
 
     # Clean dist and build directories
