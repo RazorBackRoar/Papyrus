@@ -4,5 +4,10 @@
   "files.autoSave": "afterDelay",
   "editor.fontSize": 14,
   "gitlens.liveshare.allowGuestAccess": false,
-  "gitlens.telemetry.enabled": false
+  "gitlens.telemetry.enabled": false,
+  "launch": {
+    
+    "configurations": [],
+    "compounds": []
+  }
 }
