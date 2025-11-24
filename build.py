@@ -219,9 +219,10 @@ def build():
         dmgbuild.build_dmg(dmg_path, "Papyrus Installer", settings=settings)
 
         # Cleanup .app bundle to save space/confusion
-        # if os.path.exists(app_path):
-        #     print(f"🧹 Removing intermediate {app_path}...")
-        #     shutil.rmtree(app_path)
+        # Cleanup .app bundle to save space/confusion
+        if os.path.exists(app_path):
+            print(f"🧹 Removing intermediate {app_path}...")
+            shutil.rmtree(app_path)
 
         print(f"🎉 Build Complete! DMG at {dmg_path}")
         print(
@@ -250,9 +251,10 @@ def build():
         # Cleanup
         shutil.rmtree(staging_dir)
         # Cleanup .app bundle to save space/confusion
-        # if os.path.exists(app_path):
-        #     print(f"🧹 Removing intermediate {app_path}...")
-        #     shutil.rmtree(app_path)
+        # Cleanup .app bundle to save space/confusion
+        if os.path.exists(app_path):
+            print(f"🧹 Removing intermediate {app_path}...")
+            shutil.rmtree(app_path)
 
         print(f"✅ Build Complete! (Standard layout) DMG at {dmg_path}")
         print(
