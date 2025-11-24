@@ -11,7 +11,7 @@ DATA_FILES = [
 ]
 
 OPTIONS = {
-    "argv_emulation": True,
+    "argv_emulation": False,
     "iconfile": "src/assets/papyrus.icns",
     "resources": ["src/assets/papyrus.icns"],
     "packages": ["PySide6", "bs4", "shiboken6"],
