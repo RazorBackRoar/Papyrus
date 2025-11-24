@@ -2,6 +2,10 @@ import os
 import shutil
 import subprocess
 import sys
+import re
+
+# --- Version Configuration ---
+VERSION = "1.0.0"
 
 
 def run_command(command):
@@ -11,6 +15,44 @@ def run_command(command):
     except subprocess.CalledProcessError as e:
         print(f"Error running command: {command}")
         sys.exit(1)
+
+
+def update_version():
+    """Updates the version number in setup.py from the VERSION constant."""
+    print(f"🔄 Updating version to {VERSION}...")
+
+    setup_path = "setup.py"
+    if not os.path.exists(setup_path):
+        print("⚠️ setup.py not found, skipping version update.")
+        return
+
+    with open(setup_path, "r") as f:
+        content = f.read()
+
+    # Update CFBundleVersion
+    content = re.sub(
+        r'"CFBundleVersion":\s*"[^"]+"', f'"CFBundleVersion": "{VERSION}"', content
+    )
+
+    # Update CFBundleShortVersionString
+    content = re.sub(
+        r'"CFBundleShortVersionString":\s*"[^"]+"',
+        f'"CFBundleShortVersionString": "{VERSION}"',
+        content,
+    )
+
+    # Update CFBundleGetInfoString (ensure version is appended correctly)
+    # First, reset it to base string to avoid duplication
+    content = re.sub(
+        r'"CFBundleGetInfoString":\s*"[^"]+"',
+        f'"CFBundleGetInfoString": "Papyrus HTML Converter {VERSION}"',
+        content,
+    )
+
+    with open(setup_path, "w") as f:
+        f.write(content)
+
+    print("   ✅ setup.py updated")
 
 
 def eject_dmg(volname):
@@ -105,6 +147,7 @@ def clean_frameworks(app_path):
 
 def build():
     print("🧹 Cleaning up previous builds...")
+    update_version()
     eject_dmg("Papyrus Installer")
 
     # Clean dist and build directories

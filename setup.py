@@ -64,7 +64,7 @@ OPTIONS = {
     "plist": {
         "CFBundleName": "Papyrus",
         "CFBundleDisplayName": "Papyrus",
-        "CFBundleGetInfoString": "Papyrus HTML Converter",
+        "CFBundleGetInfoString": "Papyrus HTML Converter 1.0.0",
         "CFBundleIdentifier": "com.RazorBackRoar.papyrus",
         "CFBundleVersion": "1.0.0",
         "CFBundleShortVersionString": "1.0.0",
