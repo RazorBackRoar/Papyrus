@@ -1,9 +1,30 @@
-import sys
 import os
+import sys
+from pathlib import Path
 
 sys.path.insert(0, "src")
 
 from setuptools import setup
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover
+    import tomli as tomllib  # type: ignore
+
+
+def get_project_version(default: str = "0.0.0") -> str:
+    pyproject = Path(__file__).resolve().parent / "pyproject.toml"
+    if not pyproject.exists():
+        return default
+    try:
+        with pyproject.open("rb") as fp:
+            data = tomllib.load(fp)
+        return data["project"]["version"]
+    except Exception:
+        return default
+
+
+APP_VERSION = get_project_version()
 
 APP = ["src/main.py"]
 DATA_FILES = [
@@ -64,10 +85,10 @@ OPTIONS = {
     "plist": {
         "CFBundleName": "Papyrus",
         "CFBundleDisplayName": "Papyrus",
-        "CFBundleGetInfoString": "Papyrus HTML Converter 1.1",
+        "CFBundleGetInfoString": f"Papyrus HTML Converter {APP_VERSION}",
         "CFBundleIdentifier": "com.RazorBackRoar.papyrus",
-        "CFBundleVersion": "1.1",
-        "CFBundleShortVersionString": "1.1",
+        "CFBundleVersion": APP_VERSION,
+        "CFBundleShortVersionString": APP_VERSION,
         "NSHumanReadableCopyright": "Copyright © 2025 RazorBackRoar",
         "NSHighResolutionCapable": True,
         "NSRequiresAquaSystemAppearance": False,
