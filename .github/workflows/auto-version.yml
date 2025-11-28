@@ -33,6 +33,7 @@ jobs:
           else
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
+          fi
 
       - name: Setup Python
         if: steps.check_skip.outputs.skip == 'false'
@@ -63,6 +64,7 @@ jobs:
           else
             echo "type=patch" >> $GITHUB_OUTPUT
             echo "🩹 Detected Fix/Other - Bumping PATCH"
+          fi
 
       # --- INCREMENT VERSION ---
       - name: Increment Version
