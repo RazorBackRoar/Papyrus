@@ -182,11 +182,9 @@ def configure_finder_window():
         set statusbar visible of w to false
         set icon size of icon view options of w to 100
         set arrangement of icon view options of w to not arranged
-        set position of item "{APP_NAME}.app" of w to {{140, 120}}
-        set position of item "Applications" of w to {{400, 120}}
-        set position of item "LICENSE.txt" of w to {{140, 340}}
-        set position of item "README.md" of w to {{400, 340}}
-        set bounds of w to {{200, 200, 740, 750}}
+        set position of item "{APP_NAME}.app" of w to {{125, 130}}
+        set position of item "Applications" of w to {{375, 130}}
+        set bounds of w to {{200, 200, 700, 520}}
         update d
         delay 1
         close w
@@ -206,10 +204,6 @@ def stage_dmg_contents(app_path: Path) -> Path:
     DMG_STAGING.mkdir(parents=True, exist_ok=True)
 
     shutil.copytree(app_path, DMG_STAGING / f"{APP_NAME}.app")
-    if LICENSE_FILE.exists():
-        shutil.copy(LICENSE_FILE, DMG_STAGING / "LICENSE.txt")
-    if README_FILE.exists():
-        shutil.copy(README_FILE, DMG_STAGING / "README.md")
 
     applications_link = DMG_STAGING / "Applications"
     if applications_link.exists() or applications_link.is_symlink():
@@ -256,10 +250,17 @@ def build_dmg(app_path: Path):
     device = None
     mount_point = None
     for line in attach_output.splitlines():
-        if line.startswith("/dev/"):
-            parts = line.split()
+        if not line.startswith("/dev/"):
+            continue
+
+        parts = line.split()
+        if device is None:
             device = parts[0]
-            mount_point = Path(parts[-1])
+
+        if "/Volumes/" in line:
+            mount_path = line[line.index("/Volumes/") :].strip()
+            mount_point = Path(mount_path)
+            device = parts[0]
             break
 
     if not device or not mount_point:
