@@ -138,7 +138,7 @@ Papyrus runs 100% locally. No telemetry, no analytics, no cloud features. Your H
 
 ### 👤 Author
 
-**RazorBackRoar**
+RazorBackRoar
 
 GitHub: [@RazorBackRoar](https://github.com/RazorBackRoar)
 
