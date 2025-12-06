@@ -10,4 +10,32 @@
 
 # DMG build artifacts
 temp-dmg-*
-*.dmg
+
+# Packaging / build artifacts
+build/
+pip-wheel-metadata/
+*.spec
+
+# Dist folder - ignore everything except DMG
+dist/*
+!dist/*.dmg
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+*.log
+*.tmp
+*.orig
+
+# Virtual envs
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
