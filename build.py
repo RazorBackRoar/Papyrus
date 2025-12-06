@@ -180,11 +180,11 @@ def configure_finder_window():
         set current view of w to icon view
         set toolbar visible of w to false
         set statusbar visible of w to false
-        set icon size of icon view options of w to 100
+        set icon size of icon view options of w to 128
         set arrangement of icon view options of w to not arranged
-        set position of item "{APP_NAME}.app" of w to {{125, 130}}
-        set position of item "Applications" of w to {{375, 130}}
-        set bounds of w to {{200, 200, 700, 520}}
+        set position of item "{APP_NAME}.app" of w to {{140, 130}}
+        set position of item "Applications" of w to {{400, 130}}
+        set bounds of w to {{200, 200, 740, 520}}
         update d
         delay 1
         close w
