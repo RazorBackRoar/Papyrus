@@ -29,9 +29,9 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon, QPalette, QColor, QKeySequence, QShortcut
 
-from utils.helpers import resource_path
-from ui.editor import PagedTextEdit
-from ui.highlighter import HTMLSyntaxHighlighter
+from papyrus.utils.helpers import resource_path
+from papyrus.ui.editor import PagedTextEdit
+from papyrus.ui.highlighter import HTMLSyntaxHighlighter
 
 
 class HTMLConverterApp(QMainWindow):
@@ -63,36 +63,36 @@ class HTMLConverterApp(QMainWindow):
         self.setMinimumSize(600, 500)
         self.setStyleSheet(
             f"""
-            QMainWindow {{ background-color: {self.colors['dark_grey']}; }}
-            QWidget {{ background-color: {self.colors['dark_grey']}; color: {self.colors['white']}; }}
-            QTabWidget {{ background-color: {self.colors['darker_grey']}; border: none; }}
-            QTabWidget::pane {{ border: none; background-color: {self.colors['darker_grey']}; border-radius: 8px; }}
-            QTabBar::tab {{ background-color: {self.colors['lighter_grey']}; color: {self.colors['white']}; padding: 10px 20px; margin-right: 5px; border-top-left-radius: 8px; border-top-right-radius: 8px; font-size: 14px; font-weight: 500; }}
-            QTabBar::tab:selected {{ background-color: {self.colors['darker_grey']}; color: {self.colors['light_orange']}; }}
-            QTabBar::tab:hover {{ background-color: {self.colors['orange_yellow']}; }}
-            QTextEdit {{ background-color: {self.colors['text_bg']}; color: {self.colors['text_fg']}; border: 1px solid {self.colors['deep_orange']}; border-radius: 8px; padding: 10px; font-family: 'Menlo', 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 12px; selection-background-color: {self.colors['orange_yellow']}; selection-color: {self.colors['white']}; }}
-            QTextEdit QScrollBar:vertical, QTextEdit QScrollBar:horizontal {{ background: {self.colors['darker_grey']}; }}
-            QTextEdit * {{ background-color: {self.colors['text_bg']} !important; margin: 0px !important; padding: 0px !important; }}
-            QPushButton {{ background-color: {self.colors['deep_orange']}; color: {self.colors['white']}; border: none; border-radius: 8px; padding: 12px 30px; font-size: 16px; font-weight: bold; min-width: 150px; }}
-            QPushButton:hover {{ background-color: {self.colors['light_orange']}; }}
-            QPushButton:pressed {{ background-color: {self.colors['orange_yellow']}; }}
-            QPushButton#secondary {{ background-color: {self.colors['lighter_grey']}; }}
-            QPushButton#secondary:hover {{ background-color: {self.colors['orange_yellow']}; }}
-            QCheckBox {{ color: {self.colors['white']}; font-size: 12px; spacing: 10px; }}
-            QCheckBox::indicator {{ width: 18px; height: 18px; border: 2px solid #000000; border-radius: 4px; background-color: {self.colors['lighter_grey']}; }}
-            QCheckBox::indicator:checked {{ background-color: {self.colors['deep_orange']}; border-color: {self.colors['deep_orange']}; }}
-            QLabel {{ color: {self.colors['white']}; }}
-            QLabel#title {{ color: {self.colors['light_orange']}; font-size: 44px; font-weight: bold; }}
-            QLabel#subtitle {{ color: {self.colors['white']}; font-size: 16px; }}
-            QLabel#instruction {{ color: {self.colors['light_orange']}; font-size: 14px; }}
-            QLabel#status {{ background-color: {self.colors['lighter_grey']}; color: {self.colors['white']}; padding: 8px 15px; border-radius: 4px; font-size: 11px; }}
-            QLabel#shortcuts {{ color: {self.colors['orange_yellow']}; font-size: 10px; }}
-            QLineEdit {{ background-color: {self.colors['text_bg']}; color: {self.colors['text_fg']}; border: 1px solid {self.colors['deep_orange']}; border-radius: 6px; padding: 6px 8px; selection-background-color: {self.colors['orange_yellow']}; selection-color: {self.colors['white']}; }}
-            QLineEdit:focus {{ border: 1px solid {self.colors['deep_orange']}; }}
-            QDialog {{ background-color: {self.colors['dark_grey']}; color: {self.colors['white']}; }}
-            QScrollArea {{ background-color: {self.colors['dark_grey']}; border: none; }}
-            QPushButton#historyItemButton {{ background-color: {self.colors['lighter_grey']}; color: {self.colors['deep_orange']}; border: none; border-radius: 10px; padding: 12px 16px; text-align: left; }}
-            QPushButton#historyItemButton:hover {{ background-color: {self.colors['orange_yellow']}; color: {self.colors['white']}; }}
+            QMainWindow {{ background-color: {self.colors["dark_grey"]}; }}
+            QWidget {{ background-color: {self.colors["dark_grey"]}; color: {self.colors["white"]}; }}
+            QTabWidget {{ background-color: {self.colors["darker_grey"]}; border: none; }}
+            QTabWidget::pane {{ border: none; background-color: {self.colors["darker_grey"]}; border-radius: 8px; }}
+            QTabBar::tab {{ background-color: {self.colors["lighter_grey"]}; color: {self.colors["white"]}; padding: 10px 20px; margin-right: 5px; border-top-left-radius: 8px; border-top-right-radius: 8px; font-size: 14px; font-weight: 500; }}
+            QTabBar::tab:selected {{ background-color: {self.colors["darker_grey"]}; color: {self.colors["light_orange"]}; }}
+            QTabBar::tab:hover {{ background-color: {self.colors["orange_yellow"]}; }}
+            QTextEdit {{ background-color: {self.colors["text_bg"]}; color: {self.colors["text_fg"]}; border: 1px solid {self.colors["deep_orange"]}; border-radius: 8px; padding: 10px; font-family: 'Menlo', 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 12px; selection-background-color: {self.colors["orange_yellow"]}; selection-color: {self.colors["white"]}; }}
+            QTextEdit QScrollBar:vertical, QTextEdit QScrollBar:horizontal {{ background: {self.colors["darker_grey"]}; }}
+            QTextEdit * {{ background-color: {self.colors["text_bg"]} !important; margin: 0px !important; padding: 0px !important; }}
+            QPushButton {{ background-color: {self.colors["deep_orange"]}; color: {self.colors["white"]}; border: none; border-radius: 8px; padding: 12px 30px; font-size: 16px; font-weight: bold; min-width: 150px; }}
+            QPushButton:hover {{ background-color: {self.colors["light_orange"]}; }}
+            QPushButton:pressed {{ background-color: {self.colors["orange_yellow"]}; }}
+            QPushButton#secondary {{ background-color: {self.colors["lighter_grey"]}; }}
+            QPushButton#secondary:hover {{ background-color: {self.colors["orange_yellow"]}; }}
+            QCheckBox {{ color: {self.colors["white"]}; font-size: 12px; spacing: 10px; }}
+            QCheckBox::indicator {{ width: 18px; height: 18px; border: 2px solid #000000; border-radius: 4px; background-color: {self.colors["lighter_grey"]}; }}
+            QCheckBox::indicator:checked {{ background-color: {self.colors["deep_orange"]}; border-color: {self.colors["deep_orange"]}; }}
+            QLabel {{ color: {self.colors["white"]}; }}
+            QLabel#title {{ color: {self.colors["light_orange"]}; font-size: 44px; font-weight: bold; }}
+            QLabel#subtitle {{ color: {self.colors["white"]}; font-size: 16px; }}
+            QLabel#instruction {{ color: {self.colors["light_orange"]}; font-size: 14px; }}
+            QLabel#status {{ background-color: {self.colors["lighter_grey"]}; color: {self.colors["white"]}; padding: 8px 15px; border-radius: 4px; font-size: 11px; }}
+            QLabel#shortcuts {{ color: {self.colors["orange_yellow"]}; font-size: 10px; }}
+            QLineEdit {{ background-color: {self.colors["text_bg"]}; color: {self.colors["text_fg"]}; border: 1px solid {self.colors["deep_orange"]}; border-radius: 6px; padding: 6px 8px; selection-background-color: {self.colors["orange_yellow"]}; selection-color: {self.colors["white"]}; }}
+            QLineEdit:focus {{ border: 1px solid {self.colors["deep_orange"]}; }}
+            QDialog {{ background-color: {self.colors["dark_grey"]}; color: {self.colors["white"]}; }}
+            QScrollArea {{ background-color: {self.colors["dark_grey"]}; border: none; }}
+            QPushButton#historyItemButton {{ background-color: {self.colors["lighter_grey"]}; color: {self.colors["deep_orange"]}; border: none; border-radius: 10px; padding: 12px 16px; text-align: left; }}
+            QPushButton#historyItemButton:hover {{ background-color: {self.colors["orange_yellow"]}; color: {self.colors["white"]}; }}
         """
         )
         central_widget = QWidget()
@@ -292,20 +292,20 @@ class HTMLConverterApp(QMainWindow):
     <title>Converted Document - {datetime.now().strftime("%B %d, %Y %I:%M %p")}</title>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, {self.colors['dark_grey']} 0%, {self.colors['darker_grey']} 100%); color: {self.colors['white']}; min-height: 100vh; line-height: 1.8; padding: 60px 40px; }}
+        body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, {self.colors["dark_grey"]} 0%, {self.colors["darker_grey"]} 100%); color: {self.colors["white"]}; min-height: 100vh; line-height: 1.8; padding: 60px 40px; }}
         .container {{ max-width: 900px; margin: 0 auto; background: rgba(57, 57, 57, 0.4); backdrop-filter: blur(20px); border-radius: 20px; padding: 40px; border: 1px solid rgba(255, 90, 9, 0.2); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); }}
-        h1, h2, h3, h4, h5, h6 {{ color: {self.colors['light_orange']}; margin-bottom: 20px; margin-top: 30px; }}
+        h1, h2, h3, h4, h5, h6 {{ color: {self.colors["light_orange"]}; margin-bottom: 20px; margin-top: 30px; }}
         h1:first-child {{ margin-top: 0; }}
-        a {{ color: {self.colors['deep_orange']}; text-decoration: none; transition: color 0.3s ease; }}
-        a:hover {{ color: {self.colors['light_orange']}; text-decoration: underline; }}
-        code {{ background: rgba(255, 90, 9, 0.1); color: {self.colors['light_orange']}; padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', monospace; font-variant-ligatures: none; -webkit-user-select: text; user-select: text; }}
-        pre {{ background: {self.colors['darker_grey']}; padding: 20px; border-radius: 10px; overflow-x: auto; margin: 20px 0; border: 1px solid rgba(255, 90, 9, 0.2); -webkit-user-select: text; user-select: text; white-space: pre; tab-size: 4; -moz-tab-size: 4; }}
-        blockquote {{ border-left: 4px solid {self.colors['deep_orange']}; padding-left: 20px; margin: 20px 0; font-style: italic; color: rgba(255, 255, 255, 0.8); }}
-        hr {{ border: none; height: 1px; background: linear-gradient(90deg, transparent, {self.colors['orange_yellow']}, transparent); margin: 30px 0; }}
+        a {{ color: {self.colors["deep_orange"]}; text-decoration: none; transition: color 0.3s ease; }}
+        a:hover {{ color: {self.colors["light_orange"]}; text-decoration: underline; }}
+        code {{ background: rgba(255, 90, 9, 0.1); color: {self.colors["light_orange"]}; padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', monospace; font-variant-ligatures: none; -webkit-user-select: text; user-select: text; }}
+        pre {{ background: {self.colors["darker_grey"]}; padding: 20px; border-radius: 10px; overflow-x: auto; margin: 20px 0; border: 1px solid rgba(255, 90, 9, 0.2); -webkit-user-select: text; user-select: text; white-space: pre; tab-size: 4; -moz-tab-size: 4; }}
+        blockquote {{ border-left: 4px solid {self.colors["deep_orange"]}; padding-left: 20px; margin: 20px 0; font-style: italic; color: rgba(255, 255, 255, 0.8); }}
+        hr {{ border: none; height: 1px; background: linear-gradient(90deg, transparent, {self.colors["orange_yellow"]}, transparent); margin: 30px 0; }}
         table {{ width: 100%; border-collapse: collapse; margin: 20px 0; }}
         th, td {{ padding: 12px; text-align: left; border-bottom: 1px solid rgba(255, 90, 9, 0.2); }}
-        th {{ background: rgba(255, 90, 9, 0.1); color: {self.colors['light_orange']}; font-weight: 600; }}
-        @media print {{ body {{ background: white; color: black; padding: 20px; }} .container {{ background: white; box-shadow: none; border: none; padding: 0; }} h1, h2, h3, h4, h5, h6 {{ color: {self.colors['dark_grey']}; }} a {{ color: {self.colors['orange_yellow']}; }} code {{ background: #f0f0f0; }} pre {{ background: #f5f5f5; border: 1px solid #ddd; }} }}
+        th {{ background: rgba(255, 90, 9, 0.1); color: {self.colors["light_orange"]}; font-weight: 600; }}
+        @media print {{ body {{ background: white; color: black; padding: 20px; }} .container {{ background: white; box-shadow: none; border: none; padding: 0; }} h1, h2, h3, h4, h5, h6 {{ color: {self.colors["dark_grey"]}; }} a {{ color: {self.colors["orange_yellow"]}; }} code {{ background: #f0f0f0; }} pre {{ background: #f5f5f5; border: 1px solid #ddd; }} }}
     </style>
 </head>
 <body>
@@ -591,7 +591,7 @@ class HTMLConverterApp(QMainWindow):
         for idx, entry in enumerate(self.history_entries):
             title = entry["title"]
             ts = entry.get("timestamp", "")
-            btn = QPushButton(f"{idx+1}. {title} – {ts}")
+            btn = QPushButton(f"{idx + 1}. {title} – {ts}")
             btn.setObjectName("historyItemButton")
             btn.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
             btn.clicked.connect(partial(self._open_history_details, idx))

@@ -7,16 +7,16 @@ import PySide6
 # --- Project-Specific Configuration ---
 project_root = os.path.abspath(os.getcwd())
 app_name = 'Papyrus'
-main_script = os.path.join(project_root, 'src', 'main.py')
-icon_file = os.path.join(project_root, 'src', 'assets', 'papyrus.icns')
+main_script = os.path.join(project_root, 'src', 'papyrus', 'main.py')
+icon_file = os.path.join(project_root, 'assets', 'icons', 'Papyrus.icns')
 
 # --- Analysis: Finding Dependencies ---
 a = Analysis(
-    ['src/main.py'],
+    ['src/papyrus/main.py'],
     pathex=['src'],
     binaries=[],
     datas=[
-        ('src/assets', 'assets'),
+        ('assets', 'assets'),
         (os.path.join(os.path.dirname(PySide6.__file__), 'Qt', 'plugins'), 'PySide6/Qt/plugins')
     ],
     hiddenimports=['PySide6'],

@@ -1,10 +1,9 @@
-import os
 import sys
 from pathlib import Path
 
 sys.path.insert(0, "src")
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 try:
     import tomllib
@@ -26,15 +25,16 @@ def get_project_version(default: str = "0.0.0") -> str:
 
 APP_VERSION = get_project_version()
 
-APP = ["src/main.py"]
+APP = ["src/papyrus/main.py"]
 DATA_FILES = [
-    ("assets", ["src/assets/papyrus.icns"]),
+    ("assets/icons", ["assets/icons/Papyrus.icns"]),
 ]
 
 OPTIONS = {
     "argv_emulation": False,
-    "iconfile": "src/assets/papyrus.icns",
-    "resources": ["src/assets/papyrus.icns"],
+    "iconfile": "assets/icons/Papyrus.icns",
+    "resources": ["assets/icons/Papyrus.icns"],
+    "dist_dir": "build/dist",
     "packages": ["PySide6", "bs4", "shiboken6"],
     "includes": [
         "PySide6.QtCore",
@@ -103,5 +103,7 @@ setup(
     app=APP,
     name="Papyrus",
     data_files=DATA_FILES,
+    package_dir={"": "src"},
+    packages=find_packages(where="src"),
     options={"py2app": OPTIONS},
 )

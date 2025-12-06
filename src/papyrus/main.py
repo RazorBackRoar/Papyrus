@@ -1,15 +1,18 @@
 import sys
 import os
 import traceback
+from PySide6.QtWidgets import QApplication
 
-# Ensure src is in path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add src directory to Python path to allow 'papyrus' package imports
+current_dir = os.path.dirname(os.path.abspath(__file__))
+src_dir = os.path.dirname(current_dir)
+if src_dir not in sys.path:
+    sys.path.insert(0, src_dir)
 
 
 def main():
     try:
-        from PySide6.QtWidgets import QApplication
-        from app import HTMLConverterApp
+        from papyrus.core.app import HTMLConverterApp
 
         app = QApplication(sys.argv)
         window = HTMLConverterApp()
