@@ -93,6 +93,7 @@ OPTIONS = {
         "NSHighResolutionCapable": True,
         "NSRequiresAquaSystemAppearance": False,
         "LSArchitecturePriority": ["arm64"],
+        "LSRequiresNativeExecution": True,
         "PyRuntimeLocations": [
             "@executable_path/../Frameworks/Python.framework/Versions/3.13/Python"
         ],
