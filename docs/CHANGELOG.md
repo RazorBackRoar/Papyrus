@@ -2,9 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased]
 
-### Changed
-
-- Removed redundant "Papyrus" title from the main window title bar to clean up the UI.
-- Disabled `argv_emulation` in `setup.py` to resolve launch crashes on modern macOS versions (Carbon framework error).
+## [1.0.0] - 2024-12-10
+### Added
+- Initial release
