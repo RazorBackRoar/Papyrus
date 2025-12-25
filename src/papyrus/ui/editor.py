@@ -1,4 +1,5 @@
 """Custom text editor with page breaks and HTML paste handling."""
+# pylint: disable=invalid-name  # Qt override methods keep camelCase
 from PySide6.QtWidgets import QTextEdit, QApplication  # pylint: disable=no-name-in-module
 from PySide6.QtCore import Qt, QMimeData  # pylint: disable=no-name-in-module
 from PySide6.QtGui import QColor, QPainter, QPen  # pylint: disable=no-name-in-module
