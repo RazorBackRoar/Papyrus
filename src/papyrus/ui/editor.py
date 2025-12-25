@@ -1,8 +1,8 @@
 """Custom text editor with page breaks and HTML paste handling."""
-from PySide6.QtWidgets import QTextEdit, QApplication
-from PySide6.QtCore import Qt, QMimeData
-from PySide6.QtGui import QColor, QPainter, QPen
-from utils.helpers import clean_pasted_html
+from PySide6.QtWidgets import QTextEdit, QApplication  # pylint: disable=no-name-in-module
+from PySide6.QtCore import Qt, QMimeData  # pylint: disable=no-name-in-module
+from PySide6.QtGui import QColor, QPainter, QPen  # pylint: disable=no-name-in-module
+from papyrus.utils.helpers import clean_pasted_html
 
 class PagedTextEdit(QTextEdit):
     """Text editor with visual page break indicators and HTML paste handling."""
