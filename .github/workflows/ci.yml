@@ -91,11 +91,11 @@ jobs:
 
       - name: Build DMG
         run: |
-          razorcore build Papyrus
+          razorcore build ${{ github.event.repository.name }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Papyrus-build-${{ github.run_id }}
+          name: ${{ github.event.repository.name }}-build-${{ github.run_id }}
           path: build/dist/**
           if-no-files-found: warn
